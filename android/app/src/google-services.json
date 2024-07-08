@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "184510523256",
+    "project_id": "flutter-ggnz-67207",
+    "storage_bucket": "flutter-ggnz-67207.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184510523256:android:7ce221f5b1dcce347bca8d",
+        "android_client_info": {
+          "package_name": "com.neeznggnz.tadpolediary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs2PVctXKYsNMflEnwZnXcKk4FO7R45MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "184510523256-dqe3m6hlcli3q5skicf9js4u31bf4a5n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neeznggnz.tadpolediary"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
