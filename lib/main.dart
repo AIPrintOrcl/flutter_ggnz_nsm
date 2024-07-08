@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
         Get.put(MarketPageController());
         Get.put(WatchController());
         Get.put(WalletPageController());
-        Get.put(ServiceAppInit());
+        Get.put(ServiceAppInit()); // loading 중 필요한 데이터 체크
         Get.put(CheckAppStateController());
       })),
     );
