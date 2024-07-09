@@ -20,14 +20,14 @@ class MainPageLoading extends StatelessWidget {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: const BoxDecoration( /* BoxDecoration : 위젯이나 컨테이너의 모양을 꾸밀 때 사용하는 클래스. 여러 속성을 설정하여 배경 이미지나 색상, 테두리 등을 지정 가능 */
                     image: DecorationImage(
                         image: AssetImage('assets/ggnz_logo.gif'), fit: BoxFit.cover),
                     color: Colors.white70,
                   ),
                 )
               ),
-              /*LinearPercentIndicator(
+              LinearPercentIndicator(
                 alignment: MainAxisAlignment.center,
                 width: MediaQuery.of(context).size.width * 0.9 ,
                 animation: true,
@@ -37,7 +37,7 @@ class MainPageLoading extends StatelessWidget {
                 center: Text('downloading resources (${mainLoadingController.current_image.value}/${mainLoadingController.total_image.value})'),
                 barRadius: Radius.circular(16.0),
                 progressColor: Colors.lightGreen,
-              )*/
+              )
             ],
           )
         /*})*/

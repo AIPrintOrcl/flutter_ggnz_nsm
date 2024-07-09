@@ -3,15 +3,18 @@ import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/password/password_page_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+/* 비밀번호 입력을 위한 키패드와 비밀번호 설정 및 확인 가능 기능 제공. */
+
+// 비밀번호 입력 페이지. 기존 지갑이 있는 경우와 새로운 지갑을 만드는 경우로 구분되어 있다.
 class PasswordPage extends StatelessWidget {
   const PasswordPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final hasWallet = Get.arguments == null ? false : true;
+    final hasWallet = Get.arguments == null ? false : true; /* 지갑 기존/새로운 확인 */
     final controller = Get.put(PasswordPageController());
     return Scaffold(
-      appBar: hasWallet
+      appBar: hasWallet /* 지갑이 없을 경우 */
           ? null
           : AppBar(
               elevation: 0,
@@ -21,7 +24,7 @@ class PasswordPage extends StatelessWidget {
                       child: Icon(Icons.arrow_back_ios, color: Colors.black))),
               backgroundColor: HexColor('#EAFAD9'),
             ),
-      body: Container(
+      body: Container( /* 지갑이 있을 경우 */
           color: HexColor('#EAFAD9'),
           child: Obx(
             () => Column(
@@ -68,6 +71,7 @@ class PasswordPage extends StatelessWidget {
   }
 }
 
+// 비밀번호 입력을 위한 키패드. 사용자가 숫자를 입력하면 비밀번호가 설정된다.
 class KeyPad extends StatelessWidget {
   const KeyPad({Key? key}) : super(key: key);
 

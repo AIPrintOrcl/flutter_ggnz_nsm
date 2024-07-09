@@ -21,7 +21,7 @@ class ServiceAppInit extends GetxService {
   final storage = FirebaseStorage.instance;
 
   final RxInt total_image = 1.obs;
-  final RxInt current_image = 0.obs;
+  final RxInt current_image = 0.obs; /* RxInt : GetX의 반응형 변수를 사용하여 이미지 총 개수와 현재 이미지 인덱스 관리 가능. */
 
   void _checkWalletAddress() async {
     /*final infoRef = storage.ref().child("info");
@@ -65,14 +65,14 @@ class ServiceAppInit extends GetxService {
     });
 
     print("storage test download completed!");*/
-    if (getx.isWalletExist) {
+    if (getx.isWalletExist) { /* 지갑 존재 여부 확인. 지갑이 존재할 경우 패스워드 패이지로 이동 */
       Future.delayed(
           const Duration(seconds: 5),
-          () => Get.off(() => const PasswordPage(),
+          () => Get.off(() => const PasswordPage(), /* Get.off : 페이지 이동, 이동 효과 및 지연 시간 설정 */
               arguments: true,
               transition: Transition.fadeIn,
               duration: const Duration(milliseconds: 500)));
-    } else {
+    } else { /* 지갑이 존재하지 않을 경우 메인 페이지로 이동 */
       Future.delayed(
           const Duration(seconds: 5),
           () => Get.off(() => const MainPage(),
@@ -81,6 +81,7 @@ class ServiceAppInit extends GetxService {
     }
   }
 
+  // 지갑 주소를 가져오고 GetX의 반응형 변수들을 업데이트한다.
   Future<bool> getWalletAddress() async {
     if (getx.isWalletExist) {
       final walletFile = await Wallet.getJsonFromFile();
@@ -93,12 +94,13 @@ class ServiceAppInit extends GetxService {
     return false;
   }
 
+  // Firebase Firestore에서 앱의 설정 비교하고 앱의 버전 상태 확인
   void _checkFirebaseFireStore() {
     final docRef = db.collection(CONFIG);
     docRef.snapshots().listen(
       (event) async {
         bool appState = false;
-        if (Platform.isAndroid) {
+        if (Platform.isAndroid) { /* 앱의 현재 플랫폼에 따라 Firestore에 저장된 설정을 가져온다. */
           appState = event.docs.first['androidState'];
         } else if (Platform.isIOS) {
           appState = event.docs.first['iosState'];
@@ -106,14 +108,15 @@ class ServiceAppInit extends GetxService {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         String buildNumber = packageInfo.buildNumber;
 
-        if (int.parse(buildNumber) < event.docs.first["version"] || !appState && getx.mode == "abis") {
+        /// 앱의 빌드 번호와 비교하여 버전 업데이트 여부 확인
+        if (int.parse(buildNumber) < event.docs.first["version"] || !appState && getx.mode == "abis") { /* 버전이 낮거나 앱의 상태가 비활성 일 경우 */
           Future.delayed(Duration(seconds: 5), () {
             buttonSoundController.pauseSound();
             Get.to(() => const AppStopPage(),
                 duration: Duration(milliseconds: 500),
                 transition: Transition.fadeIn);
           });
-        } else {
+        } else { /* 그렇지 않을 경우 지갑 주소 유무 확인하고 사운드 재생한다. */
           _checkWalletAddress();
           buttonSoundController.playSound();
         }
@@ -122,26 +125,29 @@ class ServiceAppInit extends GetxService {
     );
   }
 
+  // 앱의 빌드 번호 확인. 이전에 저장된 번호와 비교하여 변경 사항 존재할 경우 SharedPreferences(영구 저장소)에 저장한다.
   Future<void> checkBuildNumber() async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();;
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform(); /* 현재 빌드 번호 가져온다. */
     String buildNumber = packageInfo.buildNumber;
 
     final lastNumber = sharedPrefs.getInt('lastNumber') ?? 0;
-    if (lastNumber != int.parse(buildNumber)) {
+    if (lastNumber != int.parse(buildNumber)) { /* 이전에 저장된 번호와 비교하여 변경 사항 존재할 경우 SharedPreferences(영구 저장소)에 저장한다. */
       sharedPrefs.setBool('guide', false);
       sharedPrefs.setInt('lastNumber', int.parse(buildNumber));
     }
   }
 
+  // 애플리케이션이 시작될 때 초기화해야 하는 작업 수행.
   void init() async {
-    getx.isWalletExist = await Wallet.isKeystoreExist();
+    getx.isWalletExist = await Wallet.isKeystoreExist(); /* 지갑 파일의 존재 여부 확인하고 업데이트한다. */
 
-    await checkBuildNumber();
-    await getWalletAddress();
-    await getx.getInitialValue();
+    await checkBuildNumber(); /* 앱의 빌드 번호를 확인하고 SharedPreferences를 통해 관리하는 초기 설정을 업데이트 */
+    await getWalletAddress(); /* 지갑 주소를 가져오고 GetX의 반응형 변수들을 업데이트한다. */
+    await getx.getInitialValue(); /* 초기 데이터 값 설정 */
   }
 
+  // GetX의 라이프 사이클.
   @override
   void onInit() {
     _checkFirebaseFireStore();

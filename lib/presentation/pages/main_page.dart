@@ -11,7 +11,7 @@ import 'dart:io';
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
-  /// 알림창
+  // 알림창
   Future<void> showCustomTrackingDialog(BuildContext context) async =>
       await showDialog<void>(
         context: context,
@@ -32,13 +32,16 @@ class MainPage extends StatelessWidget {
       );
 
   Future<void> initPlugin(BuildContext context) async {
-    final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
-    if (status == TrackingStatus.notDetermined) { /* notDetermined : 사용자가 아직 승인 요청 대화 상자를 받지 못했습니다. */
+    final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus; /* 현재 추적 상태 확인 */
+    if (status == TrackingStatus.notDetermined) { /* notDetermined : 사용자가 아직 승인 요청 대화 상자를 받지 못한 상태일 경우. */
+      // 사용자 정의 추적 대화 상자 표시
       await showCustomTrackingDialog(context);
       await Future.delayed(const Duration(milliseconds: 200));
-      final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization();
+      // 추적 승인 요청
+      final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization(); /* requestTrackingAuthorization : 시스템 대화 상자를 통해 사용자의 추적 승인 요청 */
     }
 
+    // 사용자의 광고 식별자를 uuid애 저장
     final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
     print("UUID: $uuid");
   }
@@ -80,6 +83,7 @@ class MainPage extends StatelessWidget {
                     child: mainPageController.isShowButton
                         ? Column(
                             children: [
+                              // 시작하기 버튼
                               ButtonGGnz(
                                 buttonText: 'start'.tr,
                                 width: 179,
@@ -104,6 +108,7 @@ class MainPage extends StatelessWidget {
                               const SizedBox(
                                 height: 15,
                               ),
+                              // Credit 버튼
                               ButtonGGnz(
                                 buttonText: 'credit'.tr,
                                 width: 179,

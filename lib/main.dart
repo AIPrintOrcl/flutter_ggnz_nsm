@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,11 +22,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await getPermission();
-  await getStoragePermission();
-  await getAndroidNotificationPermission();
-  await getIOSNotificationPermission();
-  SharedPreferences _sharedPrefs = await SharedPreferences.getInstance();
+
+  await getPermission(); /* 시스템 경고창 생성 권한 */
+  await getStoragePermission(); /* 저장 권한 요청 */
+  await getAndroidNotificationPermission(); /* Android에서 알림 권한을 요청 */
+  await getIOSNotificationPermission(); /* IOS에서 알림 권한을 요청 */
+  SharedPreferences _sharedPrefs = await SharedPreferences.getInstance(); /* 로컬 데이터를 영구 저장 방법 */
 
   //make test wallet
   /*final wallet = await Wallet.fromJson("""{
@@ -51,9 +53,11 @@ void main() async {
   await wallet.saveAsJsonFile(data: wallet.toJson());*/
 
   //await sp.init();
+
+  // 앱의 화면 방향을 설정
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitDown, /* 앱의 화면 방향을 세로 방향으로 고정 */
   ]);
   runApp(const MyApp());
 }
@@ -66,17 +70,18 @@ class MyApp extends StatelessWidget {
     // debugInvertOversizedImages = true;
 
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, /* 디버그 모드에서 상단 배너 표시 여부 */
       title: 'GGNZ',
-      translations: Languages(),
-      locale: Get.deviceLocale,
-      navigatorKey: Get.key,
-      fallbackLocale: const Locale('ko', 'KR'),
-      theme: ThemeData(
+      translations: Languages(), /* 다국어 지원을 위한 번역 파일 관리 */
+      locale: Get.deviceLocale, /* 애플리케이션의 현재 언어를 기기의 언어로 설정. */
+      navigatorKey: Get.key, /* GetX 내비게이션의 키 설정 */
+      fallbackLocale: const Locale('ko', 'KR'), /* 기본 언어와 국가 설정. */
+      theme: ThemeData( /* 애플리케이션의 테마 설정 */
         primarySwatch: Colors.blue,
       ),
-      home: const MainPageLoading(),
-      initialBinding: BindingsBuilder((() {
+      home: const MainPageLoading(), /* 초기 화면 */
+      initialBinding: BindingsBuilder((() { /* initialBinding : 애플리케이션 시작 시 필요한 초기화 작업을 수행하는 바인딩(확정) 설정 */
+        /* BindingsBuilder : 다양한 컨트롤러들을 GetX의 의존성 관리 시스템에 등록. */
         Get.put(CollectingPageController());
         Get.put(EggStateAudioController());
         Get.put(TransitionAudioController());
@@ -87,8 +92,8 @@ class MyApp extends StatelessWidget {
         Get.put(ButtonSoundController());
         Get.put(MarketPageController());
         Get.put(WatchController());
-        Get.put(WalletPageController());
-        Get.put(ServiceAppInit()); // loading 중 필요한 데이터 체크
+        Get.put(WalletPageController()); /* 지갑 패이지 */
+        Get.put(ServiceAppInit()); /* loading 중 필요한 데이터 체크 */
         Get.put(CheckAppStateController());
       })),
     );
