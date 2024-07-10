@@ -12,29 +12,40 @@ class LoginController extends GetxController {
   GoogleSignInAccount get user => _user!;
 
   Future googleLogin() async {
-    final googleUser = await googleSignIn.signIn();
+    try {
+      final googleUser = await googleSignIn.signIn();
 
-    if(googleUser == null) return '구글 연동에 실패했습니다.'; /* 구글 로그인 실패 시 반환 */
-    _user = googleUser;
+      if (googleUser == null) return '구글 연동에 실패했습니다.';
+      /* 구글 로그인 실패 시 반환 */
+      _user = googleUser;
 
-    final googleAuth = await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-    /// 구글 로그인 성공 시 패스워드 페이지 이동
-    Get.off(() => const PasswordPage());
+      /// 구글 로그인 성공 시 패스워드 페이지 이동
+      Get.off(() => const PasswordPage());
 
-    update();
+      update();
+      return null;
+    } catch(e) {
+      return '구글 로그인 중 오류가 발생했습니다. : ${e}';
+    }
   }
 
   // 로그아웃
-  Future logout() async {
-    await googleSignIn.disconnect();
-    FirebaseAuth.instance.signOut();
-  }
+  Future<void> logout() async {
+    try {
+      await googleSignIn.disconnect();
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      // 로그아웃 중 예외 처리
+      Get.snackbar('Logout Error', '로그아웃 중 오류가 발생했습니다: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
 }
