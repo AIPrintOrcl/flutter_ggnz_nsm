@@ -65,7 +65,7 @@ class ServiceAppInit extends GetxService {
     });
 
     print("storage test download completed!");*/
-    if (getx.isWalletExist) { /* 지갑 존재 여부 확인. 지갑이 존재할 경우 패스워드 패이지로 이동 */
+    if (getx.isWalletExist) { /* 지갑 존재 여부 확인. 지갑이 존재할 경우 패스워드 페이지로 이동 */
       Future.delayed(
           const Duration(seconds: 5),
           () => Get.off(() => const PasswordPage(), /* Get.off : 페이지 이동, 이동 효과 및 지연 시간 설정 */

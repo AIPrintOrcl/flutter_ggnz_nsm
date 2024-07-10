@@ -33,7 +33,7 @@ class LoginController extends GetxController {
 
       update();
       return null;
-    } catch(e) {
+    } catch (e) {
       return '구글 로그인 중 오류가 발생했습니다. : ${e}';
     }
   }
@@ -48,4 +48,5 @@ class LoginController extends GetxController {
       Get.snackbar('Logout Error', '로그아웃 중 오류가 발생했습니다: $e',
           snackPosition: SnackPosition.BOTTOM);
     }
+  }
 }
