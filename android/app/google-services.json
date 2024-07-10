@@ -12,7 +12,20 @@
           "package_name": "com.neeznggnz.tadpolediary"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "184510523256-egnrgv1dlkgje1uusvut5erssilr2rbe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neeznggnz.tadpolediary",
+            "certificate_hash": "7a2189ea234d787af629b221ba20bbf9c3cb2ce4"
+          }
+        },
+        {
+          "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAs2PVctXKYsNMflEnwZnXcKk4FO7R45MA"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "184510523256-dqe3m6hlcli3q5skicf9js4u31bf4a5n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neeznggnz.tadpolediary"
+              }
+            }
+          ]
         }
       }
     }

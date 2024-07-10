@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
 import 'package:ggnz/presentation/pages/password/password_page.dart';
 import 'package:ggnz/utils/audio_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ggnz/services/service_functions.dart';
+import 'package:provider/provider.dart';
 
 // 사용자가 새로운 지갑을 생성하거나 기존 지갑을 가져올 수 있도록 안내하는 페이지.
 class MakeWalletPage extends StatelessWidget {
@@ -63,6 +65,29 @@ class MakeWalletPage extends StatelessWidget {
                     ),
                     Row(
                       children: [
+                        ButtonGGnz(
+                            buttonText: 'LOGIN'.tr, /* 구글 로그인 버튼 */
+                            width: Get.width / 2.7,
+                            buttonBorderColor: HexColor("#555D42"),
+                            buttonColor: HexColor("#DAEAD4"),
+                            isBoxShadow: true,
+                            style: TextStyle(
+                              fontFamily: 'ONE_Mobile_POP_OTF',
+                              color: HexColor("#555D42"),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            onPressed: () {
+                              final audioController =
+                              Get.find<AudioController>();
+                              audioController.openAudioPlayer(
+                                  url: 'assets/sound/click_menu.mp3');
+                              /// 구글 로그인
+                              Get.to(() => Get.find<LoginController>().googleLogin());
+                            }),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         ButtonGGnz(
                             buttonText: 'create_a_wallet'.tr, /* 지갑 만들기 버튼 */
                             width: Get.width / 2.7,

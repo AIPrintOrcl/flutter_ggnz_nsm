@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/firebase_options.dart';
+import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/pages/main_page_loading.dart';
 import 'package:ggnz/presentation/pages/market/market_page_controller.dart';
 import 'package:ggnz/presentation/pages/wallet/wallet_page_controller.dart';
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
         Get.put(WalletPageController()); /* 지갑 패이지 */
         Get.put(ServiceAppInit()); /* loading 중 필요한 데이터 체크 */
         Get.put(CheckAppStateController());
+        Get.put(LoginController()); /* 로그인 */
       })),
     );
   }
