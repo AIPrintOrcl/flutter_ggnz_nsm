@@ -14,15 +14,17 @@ import 'package:ggnz/services/main_timer.dart';
 /// 전역으로 가지고 있어야 할 데이터
 class ReactiveCommonController extends GetxController {
   //baobab or main net
+  // 사용 모드
   final mode = "abis_test";
 
   // web3dart 관련
-  late final Web3Client client;
-  late final chainID;
-  late double baitPrice;
+  late final Web3Client client; /* Web3.0 클라이언트. Ethereum 블록체인과의 상호작용을 담당 */
+  late final chainID; /* 현재 모드에 따른 체인 ID를 저장 */
+  late double baitPrice; /* BAIT 토큰의 가격을 나타내는 변수 */
 
-  final RxString deviceID = "".obs;
+  final RxString deviceID = "".obs; /* 장치 ID를 관리 */
 
+  // 서로 다른 스마트 계약에 대한 인스턴스
   late DeployedContract dAppContract;
   late DeployedContract baitContract;
   late DeployedContract ggnzContract;
@@ -39,6 +41,7 @@ class ReactiveCommonController extends GetxController {
   // get data from firestore
   final firestore.FirebaseFirestore db = firestore.FirebaseFirestore.instance;
 
+  // 사용자의 잔고 및 건강 등을 나타내는 변수
   RxDouble klay = 0.0.obs;
   RxDouble gog = 0.0.obs;
   RxDouble gop = 0.0.obs;
@@ -47,17 +50,19 @@ class ReactiveCommonController extends GetxController {
   RxDouble ggnz = 0.0.obs;
   RxDouble maxHealth = 0.0.obs;
 
+  // 이미지 URL 및 정보를 관리하는 RxList 및 RxMap 변수
   final gogImageUrls = [].obs;
   final gopImageUrls = [].obs;
   final ocnzImageUrls = [].obs;
   final ocnzInfo = {}.obs;
 
+  // 시간 관련 데이터를 관리
   final RxList woodBoxTime = [].obs;
   final RxList continueTime = [].obs;
 
   /// 지갑 주소
-  RxString walletAddress = "".obs;
-  RxMap keystoreFile = {}.obs;
+  RxString walletAddress = "".obs; /* 사용자 지갑 주소 */
+  RxMap keystoreFile = {}.obs; /* keystore 파일을 관리 */
 
   /// 환경게이지
   RxDouble environmentLevel = 360.0.obs;
@@ -68,14 +73,16 @@ class ReactiveCommonController extends GetxController {
   /// 건강도 (건강도는 전역으로 가지고 있다 새롭게 play 버튼을 누르면 사라지게 작업?)
   RxDouble healthLevel = 0.0.obs;
 
+  // 아이템 사용, 보상 등을 관리
   final RxMap itemUsed = {}.obs;
   final RxMap getReward = {}.obs;
   final RxMap collectingReward = {}.obs;
   final collectingViewController = Get.find<CollectingViewController>();
   final missionViewController = Get.find<MissionViewController>();
 
-  late final mainTimer timer;
+  late final mainTimer timer; /* 데이터베이스와 연동하여 타이머를 관리하는 인스턴스 */
 
+  // 초기화 함수로, Web3.0 클라이언트를 설정하고 체인 ID를 가져오는 작업 수행
   @override
   void onInit() {
     chainID = getChainID(mode);
@@ -85,7 +92,9 @@ class ReactiveCommonController extends GetxController {
     super.onInit();
   }
 
+  // 초기 값 설정을 위한 함수. 계약 초기화, 사용자 잔고 가져오기, Firestore 데이터 가져오기 등의 작업을 수행
   Future<bool> getInitialValue() async {
+    // 각 contract들을 해당 mode에 맞는 파일에서 가져와 초기화합니다.
     dAppContract = await getContract('assets/${mode}/OlchaeneezDAppControllerABI.json');
     baitContract = await getContract('assets/${mode}/OlchaeneezBaitABI.json');
     ggnzContract = await getContract('assets/${mode}/GGNZ.json');
@@ -96,7 +105,7 @@ class ReactiveCommonController extends GetxController {
     try {
       if (walletAddress.value != "") {
         // if (mode == "abis") {
-        await getGogGop();
+        await getGogGop(); /*  */
         await checkErrorLength(db);
         deviceID.value = await getDeviceInfo();
         // }
@@ -111,7 +120,8 @@ class ReactiveCommonController extends GetxController {
         final response = await client.call(
             contract: dAppContract,
             function: dAppContract.function("ggnzRate"),
-            params: []);
+            params: []
+        );
 
         baitPrice = 1 / response[0].toDouble();
 
@@ -130,6 +140,7 @@ class ReactiveCommonController extends GetxController {
     return false;
   }
 
+  // 아이템 및 알 관련 데이터를 가져오는 함수
   Future<bool> getItems(List<BigInt> itemIDs) async {
     List<EthereumAddress> userAddresses = List.generate(itemIDs.length,
         (index) => EthereumAddress.fromHex(walletAddress.value));
@@ -176,6 +187,7 @@ class ReactiveCommonController extends GetxController {
     return response[0];
   }
 
+  // GOG, GOP 등의 데이터 가져오는 함수
   Future<bool> getGogGop() async {
     final balance = await client.call(
         sender: EthereumAddress.fromHex(getx.walletAddress.value),
@@ -204,6 +216,7 @@ class ReactiveCommonController extends GetxController {
     return true;
   }
 
+  // 지갑 잔고를 가져오는 함수
   Future<bool> getWalletCoinBalance(List<String> l) async {
     final userAddress = EthereumAddress.fromHex(getx.walletAddress.value);
 
@@ -234,6 +247,7 @@ class ReactiveCommonController extends GetxController {
     return true;
   }
 
+  // Firestore에서 초기 데이터를 가져오는 함수로, 환경 게이지 및 기타 데이터를 설정
   Future<void> getFirebaseInitialData() async {
     await db.collection(getUserCollectionName(mode))
         .doc(walletAddress.value)
@@ -273,6 +287,7 @@ class ReactiveCommonController extends GetxController {
     });
   }
 
+  // Firestore에서 수집 데이터를 가져오는 함수
   Future<void> getCollectionData() async {
     await db.collection("collection").orderBy("id").get().then((querySnapshot) {
       collectingViewController.collectings.value = [];
@@ -298,6 +313,7 @@ class ReactiveCommonController extends GetxController {
     });
   }
 
+  // 수집 관련 보상을 확인하고 관리하는 함수
   Future<void> checkCollecting() async {
     collectingReward.value = {
       "health": 0,
@@ -321,6 +337,7 @@ class ReactiveCommonController extends GetxController {
     collectingViewController.showSelectedOptions();
   }
 
+  // // Firestore에서 일일 미션 데이터를 가져오는 함수
   Future<void> getDailyMissionData() async {
     await db.collection("mission").orderBy("id").get().then((querySnapshot) {
       missionViewController.missions = [];
@@ -346,6 +363,7 @@ class ReactiveCommonController extends GetxController {
     });
   }
 
+  // 특정 아이템 사용 횟수를 반환하는 함수
   int getItemUsedCount(String id) {
     if (itemUsed.value[id] != null) {
       return itemUsed.value[id]!;
@@ -354,6 +372,7 @@ class ReactiveCommonController extends GetxController {
     }
   }
 
+  // GOG 이미지 URL을 가져오는 함수
   void getGogImageURL() async {
     final gog = await client.call(
         sender: EthereumAddress.fromHex(getx.walletAddress.value),
@@ -387,6 +406,7 @@ class ReactiveCommonController extends GetxController {
     }
   }
 
+  // GOP 이미지 URL을 가져오는 함수
   void getGopImageURL() async {
     final gop = await client.call(
         sender: EthereumAddress.fromHex(getx.walletAddress.value),
@@ -420,6 +440,7 @@ class ReactiveCommonController extends GetxController {
     }
   }
 
+  // OCNZ 이미지 URL을 가져오는 함수
   void getOcnzImageURL() async {
     final ocnz = await client.call(
         sender: EthereumAddress.fromHex(getx.walletAddress.value),

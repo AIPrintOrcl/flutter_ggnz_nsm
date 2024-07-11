@@ -9,13 +9,13 @@ class LoginController extends GetxController {
 
   GoogleSignInAccount? _user;
 
-  GoogleSignInAccount get user => _user!;
+  GoogleSignInAccount get getUser => _user!;
 
-  Future googleLogin() async {
+  googleLogin() async {
     try {
       final googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) return '구글 연동에 실패했습니다.';
+      if (googleUser == null) return;
       /* 구글 로그인 실패 시 반환 */
       _user = googleUser;
 
@@ -39,7 +39,7 @@ class LoginController extends GetxController {
   }
 
   // 로그아웃
-  Future<void> logout() async {
+  void logout() async {
     try {
       await googleSignIn.disconnect();
       await FirebaseAuth.instance.signOut();

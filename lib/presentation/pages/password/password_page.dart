@@ -34,10 +34,10 @@ class PasswordPage extends StatelessWidget {
                   SizedBox(
                     width: Get.width * 0.8,
                     child: Text(
-                      controller.isWalletExist? "password_text2".tr:
-                      controller.isFirstPasswordDone
-                          ? 'confirm_password_text1'.tr
-                          : 'password_text1'.tr,
+                      controller.isWalletExist? "password_text2".tr: /* 'password_text2': '비밀번호 6자리를 입력해 주세요' */
+                      controller.isFirstPasswordDone /* 1차 비밀번호 검증 */
+                          ? 'confirm_password_text1'.tr /* 통과. ''confirm_password_text1': '한 번 더 입력해 주세요.' */
+                          : 'password_text1'.tr, /* 1차 비밀번호에서 잘못 입력할 경우. 'password_text1': '비밀번호 6자리를 설정해 주세요'. */
                       style: TextStyle(
                           fontSize: 26,
                           color: HexColor('#555D42'),
@@ -51,10 +51,11 @@ class PasswordPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Spacer(flex: 1),
                   Text(
-                      controller.isConfirmPassWord
-                          ? controller.confirmPassWord
+                    /// 키패드로 입력한 비밀번호를 특정 단어로 대체
+                      controller.isConfirmPassWord /* 6자리인지 확인 */
+                          ? controller.confirmPassWord /* 6자리 일 경우 패스워드 확인 */
                               .replaceAll(RegExp('[0-9]'), "●")
-                          : controller.passWord
+                          : controller.passWord /* 6자리 이하 일 경우 현재 패스워드 입력 */
                               .replaceAll(RegExp('[0-9]'), "●"),
                       style: TextStyle(
                           letterSpacing: 10,
@@ -99,7 +100,7 @@ class KeyPad extends StatelessWidget {
 
 class KeyPadKey extends StatelessWidget {
   final String label;
-  final dynamic value;
+  final dynamic value; /* 키패드 키의 값으로, 키를 클릭할 때 전달되는 데이터. */
   const KeyPadKey({
     Key? key,
     required this.label,
@@ -111,16 +112,16 @@ class KeyPadKey extends StatelessWidget {
     final controller = Get.find<PasswordPageController>();
     return InkWell(
         onTap: () {
-          if (Get.isSnackbarOpen) {
+          if (Get.isSnackbarOpen) { /* 스낵바(Snackbar)가 열려 있는지를 확인 */
             return;
           }
           if (!controller.isClicked) {
-            Get.snackbar('password'.tr, 'password_notice_check'.tr,
+            Get.snackbar('password'.tr, 'password_notice_check'.tr, /* 'password': '비밀번호', 'password_notice_check': '아래 체크 박스를 읽고 체크해주세요' */
                 duration: Duration(seconds: 1));
             return;
           }
           controller.setKeyPadNums(value);
-          if (controller.isConfirmPassWord) {
+          if (controller.isConfirmPassWord) { /* 6자리 확인 */
             controller.setConfirmPassWord(value);
           } else {
             controller.setPassWord(value);
@@ -139,6 +140,7 @@ class KeyPadKey extends StatelessWidget {
   }
 }
 
+// 비밀번호 설정 주의 사항 읽고 체크해야 패스워드 입력 가능.
 class PasswordInfo extends StatelessWidget {
   const PasswordInfo({Key? key}) : super(key: key);
 
@@ -156,8 +158,8 @@ class PasswordInfo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(() => Checkbox(
-                  value: controller.isClicked,
-                  onChanged: (value) => controller.setIsClicked = value!))
+                  value: controller.isClicked, /* 체크박스 체크 여부 확인 */
+                  onChanged: (value) => controller.setIsClicked = value!)) /* 체크 안될 경우 값 입력 안됨. */
             ],
           ),
           Expanded(
@@ -165,7 +167,7 @@ class PasswordInfo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'password_notice'.tr,
+                  'password_notice'.tr, /* 'password_notice': '비밀번호는 서버에 저장되지 않습니다. 비밀번호를 잃어버릴 시 복구가 불가하니 주의해 주세요.' */
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 )
               ],

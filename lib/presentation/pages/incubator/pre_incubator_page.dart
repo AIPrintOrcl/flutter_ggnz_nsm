@@ -45,7 +45,7 @@ class _PreIncubatorPageState extends State<PreIncubatorPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'made_wallet'.tr,
+                      'made_wallet'.tr, /* made_wallet : 지갑이 만들어졌어요! */
                       style: TextStyle(
                         fontFamily: 'ONE_Mobile_POP_OTF',
                         color: HexColor('#555D42'),
@@ -58,7 +58,7 @@ class _PreIncubatorPageState extends State<PreIncubatorPage> {
                       height: 80,
                     ),
                     ButtonGGnz(
-                        buttonText: 'grow_a_olchaeneez'.tr,
+                        buttonText: 'grow_a_olchaeneez'.tr, /* grow_a_olchaeneez : 올채니즈 키우기 */
                         width: 179,
                         buttonBorderColor: HexColor("#555D42"),
                         buttonColor: HexColor("#DAEAD4"),

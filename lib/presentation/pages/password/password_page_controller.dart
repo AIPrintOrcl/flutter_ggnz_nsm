@@ -7,9 +7,11 @@ import 'package:ggnz/web3dart/crypto.dart';
 import 'dart:math';
 
 class PasswordPageController extends GetxController {
+  // 비밀번호 주의사항 체크
   final _isClicked = false.obs;
   bool get isClicked => _isClicked.value;
   set setIsClicked(bool value) => _isClicked.value = value;
+
 
   final _walletAddress = "".obs;
   String get walletAddress => _walletAddress.value;
@@ -40,10 +42,10 @@ class PasswordPageController extends GetxController {
   bool get isConfirmPassWord => _recordPassWord.value.length == 6;
 
   setKeyPadNums(String value) {
-    if (_passWord.value.length == 6 || value == 'reset' || value == "<") {
+    if (_passWord.value.length == 6 || value == 'reset' || value == "<") { /* 6자리 이상 || 리셋 버튼 || 벡스페이스 입력 */
       return;
     }
-    for (var x in _keyPadNums) {
+    for (var x in _keyPadNums) { /* 리스트 키패드숫자가 0이 포함되지 않을 경우 해당 리스트를 섞는다. */
       if (!x.contains("0")) {
         x.shuffle();
       }
@@ -51,6 +53,7 @@ class PasswordPageController extends GetxController {
     // _keyPadNums.shuffle();
   }
 
+  // 패스워드 입력 및 확인
   setPassWord(String value) async {
     if (value != "<" && _passWord.value.length < 6 && value != 'reset') {
       _passWord.value = _passWord.value + value;
@@ -78,7 +81,7 @@ class PasswordPageController extends GetxController {
           //privatekey
           //print("test private key: " + bytesToHex(getx.credentials.privateKey));
 
-          Get.off(() => const IncubatorPage(),
+          Get.off(() => const IncubatorPage(), /* 게임 메인 페이지로 이동 */
               transition: Transition.fadeIn,
               duration: const Duration(milliseconds: 500)
           );
@@ -98,17 +101,18 @@ class PasswordPageController extends GetxController {
     }
   }
 
+  // 사용자가 입력한 비밀번호를 확인하고, 일치하면 새로운 지갑을 생성하고 초기 설정을 진행합니다. 일치하지 않으면 스낵바를 통해 사용자에게 알림을 제공
   setConfirmPassWord(String value) async {
-    if (value != "<" && _confirmPassWord.value.length < 6 && value != 'reset') {
+    if (value != "<" && _confirmPassWord.value.length < 6 && value != 'reset') { /* if 조건 제외 시 입력 된다. */
       _confirmPassWord.value = _confirmPassWord.value + value;
     }
 
-    if (value == 'reset') {
+    if (value == 'reset') { // 리셋 클릭
       _confirmPassWord.value = "";
     }
 
-    if (value == "<") {
-      if (_confirmPassWord.value.isEmpty) {
+    if (value == "<") { // 백 스페이스
+      if (_confirmPassWord.value.isEmpty) { /* 문자열이 비어 있으면 리턴 */
         return;
       }
       _confirmPassWord.value = _confirmPassWord.value
@@ -116,37 +120,41 @@ class PasswordPageController extends GetxController {
     }
 
     if (_confirmPassWord.value.length == 6 &&
-        _recordPassWord.value == _confirmPassWord.value) {
+        _recordPassWord.value == _confirmPassWord.value) { /* 비밀번호 설정 완료 => 비밀번호가 6자리 이고 확인까지 끝난 비밀번호 */
 
       late final credential;
+
+      // Get.arguments에서 "key" 값을 가져와서 조건에 따라 credential 초기화
       if (Get.arguments != null && Get.arguments["key"] != null) {
-        credential = Web3PrivateKey.fromHex(Get.arguments["key"]);
+        credential = Web3PrivateKey.fromHex(Get.arguments["key"]); /* // 16진수 개인 생성 */
       } else {
-        credential = Web3PrivateKey.createRandom(Random.secure());
+        credential = Web3PrivateKey.createRandom(Random.secure()); /* 임의의 랜덤값으로 초기화 */
       }
 
       //create new wallet
+      /// 지갑 생성
       Wallet wallet = Wallet.createNew(
           credential,
-          _confirmPassWord.value,
-          Random.secure());
+          _confirmPassWord.value, /* 키패드로 생성된 비밀번호 */
+          Random.secure()
+      );
 
-      setWalletAddress = wallet.privateKey.address.hexEip55;
-      getx.walletAddress.value = wallet.privateKey.address.hexEip55;
-      getx.credentials = wallet.privateKey;
-      wallet.saveAsJsonFile(data: wallet.toJson());
+      setWalletAddress = wallet.privateKey.address.hexEip55; /* 지갑 주소를 EIP-55 표준 형식으로 변경 후 변수에 저장 */
+      getx.walletAddress.value = wallet.privateKey.address.hexEip55; /* 지갑 주소를 getx 상태 관리 객체 변수에 저장 */
+      getx.credentials = wallet.privateKey; /* 지갑 개인키를 getx 상태 관리 객체 변수에 저장 => 자격증명 설정 */
+      wallet.saveAsJsonFile(data: wallet.toJson()); /* 지갑 정보 JSON 파일로 저장 */
 
       await getx.getInitialValue();
 
-      Get.off(() => const PreIncubatorPage(),
+      Get.off(() => const PreIncubatorPage(), /* 지갑 생성 완료 확인 페이지 이동. */
           transition: Transition.fadeIn,
           duration: const Duration(milliseconds: 500));
     }
 
     if (_confirmPassWord.value.length == 6 &&
         _recordPassWord.value != _confirmPassWord.value &&
-        !Get.isSnackbarOpen) {
-      Get.snackbar('password'.tr, 'password_check'.tr);
+        !Get.isSnackbarOpen) { /* 1차와 2차 비밀번호가 다를 경우 */
+      Get.snackbar('password'.tr, 'password_check'.tr); /* 'password': '비밀번호', 'password_check': '입력하신 비밀번호를 확인해주세요' */
     }
   }
 
