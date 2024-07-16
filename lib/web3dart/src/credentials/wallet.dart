@@ -249,6 +249,8 @@ class Wallet {
   String toJson() {
     final ciphertextBytes = _encryptPrivateKey();
 
+    print("uuid : " + uuid.toString());
+
     final map = {
       'crypto': {
         'cipher': 'aes-128-ctr',
@@ -266,6 +268,7 @@ class Wallet {
     return json.encode(map);
   }
 
+  // 생성된 지갑 정보를 앱 자체 JSON 파일로 저장
   Future<File> saveAsJsonFile({String? data}) async {
     final file = await FilePath()._localFile;
     file.writeAsStringSync(data ?? '');

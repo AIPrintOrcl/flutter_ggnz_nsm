@@ -1,45 +1,45 @@
 {
   "project_info": {
-    "project_number": "184510523256",
-    "project_id": "flutter-ggnz-67207",
-    "storage_bucket": "flutter-ggnz-67207.appspot.com"
+    "project_number": "732914892685",
+    "project_id": "ggnz-nsm",
+    "storage_bucket": "ggnz-nsm.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184510523256:android:7ce221f5b1dcce347bca8d",
+        "mobilesdk_app_id": "1:732914892685:android:1941f3d2e9a89704d387c4",
         "android_client_info": {
           "package_name": "com.neeznggnz.tadpolediary"
         }
       },
       "oauth_client": [
         {
-          "client_id": "184510523256-egnrgv1dlkgje1uusvut5erssilr2rbe.apps.googleusercontent.com",
+          "client_id": "732914892685-rkp0vvtk61tendb939huctd7q7ttfb6j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.neeznggnz.tadpolediary",
-            "certificate_hash": "7a2189ea234d787af629b221ba20bbf9c3cb2ce4"
+            "certificate_hash": "ba09e4d400407796adfe76786263486f9cc3f652"
           }
         },
         {
-          "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+          "client_id": "732914892685-phbcq7u26lfpbod9efbo5su6pg3rf494.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAs2PVctXKYsNMflEnwZnXcKk4FO7R45MA"
+          "current_key": "AIzaSyBR3AX732jkwhgmOFDs9WZ7UyN5aCQ5Z6I"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "184510523256-dhfva8a49u18o6d9po4mdip6h79idkt9.apps.googleusercontent.com",
+              "client_id": "732914892685-phbcq7u26lfpbod9efbo5su6pg3rf494.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "184510523256-dqe3m6hlcli3q5skicf9js4u31bf4a5n.apps.googleusercontent.com",
+              "client_id": "732914892685-nv1s9kemt7hlvafmh5vagpgmsk4pu7ef.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.neeznggnz.tadpolediary"

@@ -36,7 +36,7 @@ class ReactiveCommonController extends GetxController {
   int gopIndex = 2;
   int ocnzIndex = 3;
 
-  late final bool isWalletExist;
+  late final bool isWalletExist;  /* 생성된 지갑이 있는지 확인 */
 
   // get data from firestore
   final firestore.FirebaseFirestore db = firestore.FirebaseFirestore.instance;
@@ -92,7 +92,7 @@ class ReactiveCommonController extends GetxController {
     super.onInit();
   }
 
-  // 초기 값 설정을 위한 함수. 계약 초기화, 사용자 잔고 가져오기, Firestore 데이터 가져오기 등의 작업을 수행
+  // 초기 값 설정을 위한 함수. 계약 초기화, 사용자 잔고 가져오기, Firestore 데이터 가져오기 등의 작업을 수행. [시점] password_page_controller.dart의 setConfirmPassWord 메소드 실행 할때.
   Future<bool> getInitialValue() async {
     // 각 contract들을 해당 mode에 맞는 파일에서 가져와 초기화합니다.
     dAppContract = await getContract('assets/${mode}/OlchaeneezDAppControllerABI.json');
@@ -105,7 +105,7 @@ class ReactiveCommonController extends GetxController {
     try {
       if (walletAddress.value != "") {
         // if (mode == "abis") {
-        await getGogGop(); /*  */
+        await getGogGop(); /* GOG(프리미엄 알), GOP(특별한 알) */
         await checkErrorLength(db);
         deviceID.value = await getDeviceInfo();
         // }
@@ -187,7 +187,7 @@ class ReactiveCommonController extends GetxController {
     return response[0];
   }
 
-  // GOG, GOP 등의 데이터 가져오는 함수
+  // GOG(프리미엄 알), GOP(특별한 알) 등의 데이터 가져오는 함수
   Future<bool> getGogGop() async {
     final balance = await client.call(
         sender: EthereumAddress.fromHex(getx.walletAddress.value),
@@ -247,7 +247,7 @@ class ReactiveCommonController extends GetxController {
     return true;
   }
 
-  // Firestore에서 초기 데이터를 가져오는 함수로, 환경 게이지 및 기타 데이터를 설정
+  // Firestore에서 초기 데이터를 가져오는 함수로, 환경 게이지 및 기타 데이터를 설정. [시점] password_page_controller.dart의 await getx.getInitialValue(); 실행 할 때.
   Future<void> getFirebaseInitialData() async {
     await db.collection(getUserCollectionName(mode))
         .doc(walletAddress.value)

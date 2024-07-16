@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/app_stop_page.dart';
+import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/pages/main_page.dart';
 import 'package:ggnz/presentation/pages/password/password_page.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_sound.dart';
@@ -14,7 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// loading 중 필요한 데이터 체크
+// loading 중 필요한 데이터 체크. GetxService : 앱 실행하는동안 계속 유지.
 class ServiceAppInit extends GetxService {
   final buttonSoundController = Get.find<ButtonSoundController>();
   final db = firestore.FirebaseFirestore.instance;
@@ -65,7 +66,9 @@ class ServiceAppInit extends GetxService {
     });
 
     print("storage test download completed!");*/
-    if (getx.isWalletExist) { /* 지갑 존재 여부 확인. 지갑이 존재할 경우 패스워드 페이지로 이동 */
+    // getx.isWalletExist = false;
+    // if (getx.isWalletExist) { /* 지갑 존재 여부 확인. 지갑이 존재할 경우 패스워드 페이지로 이동 */
+    if (LoginController.instance.getUser != null) {
       Future.delayed(
           const Duration(seconds: 5),
           () => Get.off(() => const PasswordPage(), /* Get.off : 페이지 이동, 이동 효과 및 지연 시간 설정 */
@@ -97,11 +100,12 @@ class ServiceAppInit extends GetxService {
   // Firebase Firestore에서 앱의 설정 비교하고 앱의 버전 상태 확인
   void _checkFirebaseFireStore() {
     final docRef = db.collection(CONFIG);
+    /*
     docRef.snapshots().listen(
       (event) async {
         bool appState = false;
-        if (Platform.isAndroid) { /* 앱의 현재 플랫폼에 따라 Firestore에 저장된 설정을 가져온다. */
-          appState = event.docs.first['androidState'];
+        if (Platform.isAndroid) { *//* 앱의 현재 플랫폼에 따라 Firestore에 저장된 설정을 가져온다. *//*
+          appState = event.docs.first['androidState']; *//* [여기서 downnloading resources 0/1 상태로 멈춤] *//*
         } else if (Platform.isIOS) {
           appState = event.docs.first['iosState'];
         }
@@ -109,20 +113,22 @@ class ServiceAppInit extends GetxService {
         String buildNumber = packageInfo.buildNumber;
 
         /// 앱의 빌드 번호와 비교하여 버전 업데이트 여부 확인
-        if (int.parse(buildNumber) < event.docs.first["version"] || !appState && getx.mode == "abis") { /* 버전이 낮거나 앱의 상태가 비활성 일 경우 */
+        if (int.parse(buildNumber) < event.docs.first["version"] || !appState && getx.mode == "abis") { *//* 버전이 낮거나 앱의 상태가 비활성 일 경우 *//*
           Future.delayed(Duration(seconds: 5), () {
             buttonSoundController.pauseSound();
             Get.to(() => const AppStopPage(),
                 duration: Duration(milliseconds: 500),
                 transition: Transition.fadeIn);
           });
-        } else { /* 그렇지 않을 경우 지갑 주소 유무 확인하고 사운드 재생한다. */
+        } else { *//* 그렇지 않을 경우 지갑 주소 유무 확인하고 사운드 재생한다. *//*
           _checkWalletAddress();
           buttonSoundController.playSound();
         }
       },
       onError: (error) => print("Listen failed: $error"),
     );
+    */
+    _checkWalletAddress();
   }
 
   // 앱의 빌드 번호 확인. 이전에 저장된 번호와 비교하여 변경 사항 존재할 경우 SharedPreferences(영구 저장소)에 저장한다.

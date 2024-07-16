@@ -142,7 +142,7 @@ class PasswordPageController extends GetxController {
       setWalletAddress = wallet.privateKey.address.hexEip55; /* 지갑 주소를 EIP-55 표준 형식으로 변경 후 변수에 저장 */
       getx.walletAddress.value = wallet.privateKey.address.hexEip55; /* 지갑 주소를 getx 상태 관리 객체 변수에 저장 */
       getx.credentials = wallet.privateKey; /* 지갑 개인키를 getx 상태 관리 객체 변수에 저장 => 자격증명 설정 */
-      wallet.saveAsJsonFile(data: wallet.toJson()); /* 지갑 정보 JSON 파일로 저장 */
+      wallet.saveAsJsonFile(data: wallet.toJson()); /* 생성된 지갑 정보를 앱 자체 JSON 파일로 저장 */
 
       await getx.getInitialValue();
 

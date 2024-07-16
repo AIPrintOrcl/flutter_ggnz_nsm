@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/pages/password/password_page_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -15,7 +16,17 @@ class PasswordPage extends StatelessWidget {
     final controller = Get.put(PasswordPageController());
     return Scaffold(
       appBar: hasWallet /* 지갑이 없을 경우 */
-          ? null
+          ? AppBar(
+              elevation: 0,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    LoginController.instance.signOut();
+                  },
+                  icon: Icon(Icons.logout),
+                )
+              ],
+          )
           : AppBar(
               elevation: 0,
               leading: InkWell(
@@ -23,6 +34,14 @@ class PasswordPage extends StatelessWidget {
                   child: const Center(
                       child: Icon(Icons.arrow_back_ios, color: Colors.black))),
               backgroundColor: HexColor('#EAFAD9'),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      LoginController.instance.signOut();
+                    },
+                    icon: Icon(Icons.logout),
+                )
+              ],
             ),
       body: Container( /* 지갑이 있을 경우 */
           color: HexColor('#EAFAD9'),

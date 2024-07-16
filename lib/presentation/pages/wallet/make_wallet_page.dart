@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/login/login_controller.dart';
+import 'package:ggnz/presentation/pages/login/login_page.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
 import 'package:ggnz/presentation/pages/password/password_page.dart';
 import 'package:ggnz/utils/audio_controller.dart';
@@ -63,10 +64,10 @@ class MakeWalletPage extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
+                    Column(
                       children: [
                         ButtonGGnz(
-                            buttonText: 'LOGIN'.tr, /* 구글 로그인 버튼 */
+                            buttonText: 'LOGIN'.tr, /* 로그인 버튼 */
                             width: Get.width / 2.7,
                             buttonBorderColor: HexColor("#555D42"),
                             buttonColor: HexColor("#DAEAD4"),
@@ -83,7 +84,7 @@ class MakeWalletPage extends StatelessWidget {
                               audioController.openAudioPlayer(
                                   url: 'assets/sound/click_menu.mp3');
                               /// 구글 로그인
-                              Get.to(() => Get.find<LoginController>().googleLogin());
+                              Get.to(() => LoginPage());
                             }),
                         const SizedBox(
                           width: 10,

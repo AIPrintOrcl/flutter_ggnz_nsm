@@ -1,5 +1,6 @@
 import 'dart:isolate';
 
+import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/web3dart/web3dart.dart';
 import 'package:http/http.dart';
 import 'package:web_socket_channel/io.dart';
@@ -25,8 +26,10 @@ int getChainID(String mode) {
   return mode == "abis"? 8217 : 1001;
 }
 
-String getUserCollectionName(String mode) {
-  return mode == "abis"? "users": "users_test";
+String getUserCollectionName(String mode) { /* 모드에 따른 사용자명 반환 */
+  // return mode == "abis"? "users": "users_test";
+  var user = LoginController.instance.getUser!.email;
+  return mode == "abis" ? "users": user!;
 }
 
 String getMagicWord(String mode) {

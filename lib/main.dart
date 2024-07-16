@@ -21,6 +21,7 @@ import 'presentation/pages/collecting/collecting_page_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    name: "ggnz-nsm",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -93,10 +94,10 @@ class MyApp extends StatelessWidget {
         Get.put(ButtonSoundController());
         Get.put(MarketPageController());
         Get.put(WatchController());
+        Get.put(LoginController()); /* 로그인 */
         Get.put(WalletPageController()); /* 지갑 패이지 */
         Get.put(ServiceAppInit()); /* loading 중 필요한 데이터 체크 */
         Get.put(CheckAppStateController());
-        Get.put(LoginController()); /* 로그인 */
       })),
     );
   }

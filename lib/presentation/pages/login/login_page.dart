@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
-import 'package:ggnz/utils/audio_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+
+  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(
                       width: Get.width * 0.8,
                       child: Text(
-                        'google Login',
+                        'Login',
                         style: TextStyle(
                           fontFamily: 'ONE_Mobile_POP_OTF',
                           color: HexColor('#555D42'),
@@ -59,8 +58,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               /// 구글 로그인
-                              final googleProvider = Provider.of<LoginController>(context, listen: false);
-                              googleProvider.googleLogin();
+                              LoginController.instance.signInWithGoogle();
                             }),
                         const SizedBox(
                           width: 10,
