@@ -223,6 +223,7 @@ class ImportPage extends StatelessWidget {
                     final audioController = Get.find<AudioController>();
                     audioController.openAudioPlayer(
                         url: 'assets/sound/click_menu.mp3');
+                    /// 개인키의 조건
                     if (importTextController.text.length == 64
                         || importTextController.text.length == 66
                         && importTextController.text.substring(0, 2) == "0x"

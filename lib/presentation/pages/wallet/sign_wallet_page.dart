@@ -36,6 +36,11 @@ class SignWalletPage extends StatelessWidget {
                       width: Get.width * 0.8,
                       child: Text(
                         !["wants_to_buy_egg".tr, "check_egg".tr, "check_dispatch".tr, "check_minting".tr].contains(signReason)?
+                        /* 'wants_to_buy_egg': '깨울 알이 없습니다. 알 구매란으로 이동하시겠습니까?'
+                        *  'check_egg': '이전에 키우던 올채니를 이어서 키우시겠습니까?'
+                        *  'check_dispatch': '방생 중이던 올채니를 이어서 방생하시겠습니까?'
+                        *  'check_minting': '입양 중이던 올채니를 이어서 입양 하시겠습니까?'
+                        * */
                         '$signReason \n ${'request_permission_to_work'.tr}'
                             : '$signReason',
                         style: TextStyle(

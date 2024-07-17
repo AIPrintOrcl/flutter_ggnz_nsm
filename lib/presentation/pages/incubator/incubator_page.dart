@@ -28,18 +28,18 @@ class IncubatorPage extends StatelessWidget {
         url: bgmAudioController.backgroundStateBgm);
     return Scaffold(
       body: Obx(() {
-        if (!guidePageController.isSeenGuide) {
+        if (!guidePageController.isSeenGuide) { /* 올체니즈 성장 가이드 화면 표시 */
           return GuidePage();
         }
-        return AnimatedSwitcher(
-            duration: Duration(seconds: controller.eggAwake ? 0 : 1),
-            switchInCurve: Curves.easeInOut,
+        return AnimatedSwitcher( /* 잠 깨우기/포기하다 버튼 */
+            duration: Duration(seconds: controller.eggAwake ? 0 : 1), /* 알이 잠에서 깬 여부 */
+            switchInCurve: Curves.easeInOut, /* 시작할 때 천천히 시작하고, 중간에 속도가 빨라지다가 끝날 때 다시 천천히 끝나는 애니메이션 효과 */
             child: controller.eggAwake
-                ? const EggAwake()
-                : controller.isBackgroundTransition
-                    ? const EnvironmentChange()
-                    : controller.isPartsTransition
-                        ? const PartsTransition(
+                ? const EggAwake() /* 잠 깨우기 버튼 실행 */
+                : controller.isBackgroundTransition /* 환경게이지 변수에 따른 배경이미지 트랜지션 상태 */
+                    ? const EnvironmentChange() /* 환경게이지로 인해 배경이미지 변경할 경우 */
+                    : controller.isPartsTransition  /* 파츠 성장 진화시 트랜지션 이미지 상태 */
+                        ? const PartsTransition( /* 파츠 성장 구간별 게이지가 진화 조건에 충족하여 파츠 성장 진화 할 경우 진화 관련 효과음 및 애니메이션 표시 */
                             key: Key('Parts Transition'),
                           )
                         : Container(
@@ -74,6 +74,7 @@ class IncubatorPage extends StatelessWidget {
   }
 }
 
+// 환경변화 발생할 경우 관련 효과음 및 애니메이션 표시
 class EnvironmentChange extends StatelessWidget {
   const EnvironmentChange({Key? key}) : super(key: key);
 
@@ -91,13 +92,14 @@ class EnvironmentChange extends StatelessWidget {
       decoration: const BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/transition/environment_transition.gif'),
+          image: AssetImage('assets/transition/environment_transition.gif'), /* 환경변화 로고 애니메이션 gif */
         ),
       ),
     );
   }
 }
 
+// 파츠 성장 구간별 게이지가 진화 조건에 충족하여 파츠 성장 진화 할 경우 진화 관련 효과음 및 애니메이션 표시
 class PartsTransition extends StatelessWidget {
   const PartsTransition({Key? key}) : super(key: key);
 
@@ -119,7 +121,7 @@ class PartsTransition extends StatelessWidget {
           image: DecorationImage(
             fit: BoxFit.contain,
             image: AssetImage(
-                'assets/transition/parts_transition${incubatorController.partsTransitionNumber}.gif'),
+                'assets/transition/parts_transition${incubatorController.partsTransitionNumber}.gif'), /* 파츠별로 애니메이션 gif */
           ),
         ),
       ),
@@ -127,6 +129,7 @@ class PartsTransition extends StatelessWidget {
   }
 }
 
+// 잠 깨우기 버튼 실행할 경우 애니메이션 표시
 class EggAwake extends StatelessWidget {
   const EggAwake({Key? key}) : super(key: key);
 
@@ -144,7 +147,7 @@ class EggAwake extends StatelessWidget {
         color: Colors.grey,
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/transition/egg_awake.gif'),
+          image: AssetImage('assets/transition/egg_awake.gif'), /* 알이 잠에서 깬 gif */
         ),
       ),
     );

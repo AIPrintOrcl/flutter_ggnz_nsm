@@ -20,7 +20,7 @@ class GuidePage extends StatelessWidget {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           elevation: 0,
-          title: Text('olchaeneez_guide'.tr,
+          title: Text('olchaeneez_guide'.tr, /* 'olchaeneez_guide': '올채니즈 성장 가이드' */
               style: TextStyle(
                   fontFamily: 'ONE_Mobile_POP_OTF',
                   fontSize: 18,
@@ -29,7 +29,7 @@ class GuidePage extends StatelessWidget {
           centerTitle: true,
           leading: InkWell(
               onTap: () {
-                guidePageController.setIsSeenGuide();
+                guidePageController.setIsSeenGuide(); /* 올체니즈 성장 가이드 한번 표시 되었음을 기록 */
               },
               child: const Center(
                   child: Icon(Icons.arrow_back_ios, color: Colors.black))),

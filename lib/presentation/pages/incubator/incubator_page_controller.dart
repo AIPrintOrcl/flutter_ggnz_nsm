@@ -401,6 +401,7 @@ class IncubatorPageController extends GetxController
   String get clickedItem => _clickedItem.value;
   set setClickedItem(String itemName) => _clickedItem.value = itemName;
 
+  // 알이 잠에서 깨어 있는지의 여부
   final _eggAwake = false.obs;
   bool get eggAwake => _eggAwake.value;
   set setEggAwake(bool b) => _eggAwake.value = b;
@@ -806,13 +807,13 @@ class IncubatorPageController extends GetxController
       // check saved data
       final result = await Get.to(
               () => SignWalletPage(
-            signReason: 'check_egg'.tr,
+            signReason: 'check_egg'.tr, /* 'check_egg': '이전에 키우던 올채니를 이어서 키우시겠습니까?' */
           ),
           arguments: {"reason": "check_egg"});
       if (result) {
         // start with loaded data
         resumeMarimo(marimo_data);
-      } else {
+      } else { /*  */
         finishIncubating();
       }
     }

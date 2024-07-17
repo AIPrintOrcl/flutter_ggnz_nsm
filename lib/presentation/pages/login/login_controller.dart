@@ -19,18 +19,7 @@ class LoginController extends GetxController {
   void onInit() {
     _user = Rx<User?>(auth.currentUser);
     _user.bindStream(auth.userChanges());
-
     super.onInit();
-  }
-
-  // 모든 초기화 작업이 완료되고 UI가 렌더링된 후에 호출
-  @override
-  void onReady() {
-    super.onReady();
-    _user = Rx<User?>(auth.currentUser);
-    _user.bindStream(auth.userChanges());
-    print("현재 로그인 이메일 : " + _user.value!.email.toString());
-    ever(_user, _initialScreen); /* 로그인 여부에 따라 홈 or 로그인으로 화면 전환 */
   }
 
   // 유저가 null이면 로그인 창, 아니면 홈 페이지로 이동
@@ -52,6 +41,8 @@ class LoginController extends GetxController {
     );
 
     await auth.signInWithCredential(credential);
+
+    ever(_user, _initialScreen); /* 로그인 여부에 따라 홈 or 로그인으로 화면 전환 */
   }
 
   void signOut() async {
