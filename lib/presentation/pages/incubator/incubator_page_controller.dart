@@ -43,7 +43,7 @@ class IncubatorPageController extends GetxController
   int? lastUsedTime = null;
   bool? lastIsLocked = null;
 
-  // 배치 아이템
+  // 배치 아이템 이미지명
   final _arrangementItemImage = ''.obs;
   String get arrangementItemImage => _arrangementItemImage.value;
   void setArrangementItemImage({required String image}) {
@@ -73,7 +73,7 @@ class IncubatorPageController extends GetxController
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
   // 분양하기 버튼 상태 변화
-  final _isPlaying = false.obs;
+  final _isPlaying = false.obs; /* 부화 상태 ?? */
   bool get isPlaying => _isPlaying.value;
   set setIsPlaying(bool b) => _isPlaying.value = b;
 
@@ -93,7 +93,7 @@ class IncubatorPageController extends GetxController
   // fireabse 데이터 전달 용도
   final Rx<Map<String, String>> _marimoPartsNumMap = Rx({});
   Map<String, String> get marimoPartsNumMap => _marimoPartsNumMap.value;
-  StreamSubscription? checkMintingStream;
+  StreamSubscription? checkMintingStream; /// StreamSubscription : 스트림으로부터 발생하는 이벤트를 처리하는 데 사용. 스트림을 구독하고 관리
 
   // 민팅 가능 여부 판단
   final _isAbleMint = false.obs;
@@ -209,7 +209,7 @@ class IncubatorPageController extends GetxController
   final emotionAudioController = Get.find<EmotionAudioController>();
 
   // 성장 시간 - 보통알(10% 성체) , 특별알 (50% 성체), 프리미엄알(100% 성체)
-  int checkPartsTimeLimit(int pageNum) {
+  int checkPartsTimeLimit(int pageNum) { /* pageNum = 0 : 보통알, 1 : 특별알, 2 : 프리미엄알 */
     List<int> partsTimeList = pageNum == 0
         ? List.generate(
             10,
@@ -335,7 +335,7 @@ class IncubatorPageController extends GetxController
 
   // 환경게이지에 스트림 배경 이미지 변경 변수 & 함수
   final Rx<String> _backgroundStateImage =
-      getx.environmentLevel.value < getx.environmentBad
+      getx.environmentLevel.value < getx.environmentBad /* 환경게이지 < 환경게이지 나쁨 */
           ? 'assets/bg0.gif'.obs
           : getx.environmentLevel.value < getx.environmentNormal
               ? 'assets/bg1.gif'.obs
@@ -473,22 +473,22 @@ class IncubatorPageController extends GetxController
 
   // 분양하기 버튼 함수
   void startTimer({required int eggsPageNum, required bool needToPay, required Map data}) async {
-    openLoadingDialog();
-    await getx.getInitialValue();
+    openLoadingDialog(); /* 로딩 중.. 로딩 다이얼로그 표시 */
+    await getx.getInitialValue(); /* 초기값 가져오기 */
 
-    int partsTimeLimit = 0;
+    int partsTimeLimit = 0; /* 타이머 제한 변수 */
     final double environment_initial = setEnvironmentLevelTimer(); //함수 명 변경 필요
     late final String marimo_id;
 
-    if (needToPay) {
+    if (needToPay) { /* 결재 필요한 경우 */
       partsTimeLimit = checkPartsTimeLimit(eggsPageNum);
-      marimo_id = Uuid().v4();
-    } else {
+      marimo_id = Uuid().v4(); /* Uuid().v4() : 고유한 ID를 생성. */
+    } else { /* 결재가 필요하지 않은 겨우 */
       partsTimeLimit = data["time_interval"];
       marimo_id = data["id"] != null? data["id"] : Uuid().v4();
     }
 
-    incubator = new GGNZIncubateHandler({
+    incubator = new GGNZIncubateHandler({ /* incubator 초기화 */
       "db": db,
       "id": marimo_id,
       "time_interval": partsTimeLimit,
@@ -502,35 +502,36 @@ class IncubatorPageController extends GetxController
       "marimoPartCheck": data["marimoPartCheck"]
     });
 
+    // incubator 실행 및 결과 처리
     if (incubator != null) {
-      final awake_result = await incubator!.initIncubator(needToPay);
+      final awake_result = await incubator!.initIncubator(needToPay); /* 사용자가 결제 지불해야 하는지 여부에 따라 marimo의 incubator을 초기화 기능 수행 */
       print("test awake result: ${awake_result}");
 
-      closeLoadingDialog();
-      if (awake_result["result"] == "success") {
+      closeLoadingDialog(); /* 로딩 다이얼로그를 닫는다. */
+      if (awake_result["result"] == "success") { /* 알에서 깨기 성공 할 경우 */
         _isPlaying.value = true;
-        if (data["time"] < 5) {
-          _eggAwake.value = true;
+        if (data["time"] < 5) { /* 시간이 5보다 적을 경우 ?? */
+          _eggAwake.value = true; /* 알에서 깬 여부 변수에 알에서 깸을 저장 */
         }
-        await getx.getEggs([BigInt.from(eggsPageNum + 1)]);
-        if (needToPay && awake_result["used_item"] != -1) {
-          await getx.getItems([BigInt.from(awake_result["used_item"])]);
-          await db
+        await getx.getEggs([BigInt.from(eggsPageNum + 1)]); /* 알 정보를 가져온다. */
+        if (needToPay && awake_result["used_item"] != -1) { /* 결제 지불 했고 아이템을 사용했을 경우 */
+          await getx.getItems([BigInt.from(awake_result["used_item"])]); /* 사용된 아이템 가져온다. */
+          await db /* 사용자 데이터베이스 업데이트 */
               .collection(getUserCollectionName(getx.mode))
               .doc(getx.walletAddress.value)
               .update({
-            "itemUsed.${awake_result["used_item"]}": FieldValue.increment(1),
+            "itemUsed.${awake_result["used_item"]}": FieldValue.increment(1), /* itemUsed 필드에서 사용된 아이템의 사용 횟수 +1  */
           });
         }
-        incubator!.startIncubating();
+        incubator!.startIncubating(); /* 타이머를 사용하여 주기적으로 알 부화 상태를 체크하고, 특정 조건에 따라 건강 상태와 환경 수준을 업데이트하며, 데이터를 데이터베이스에 저장하는 작업을 수행 */
       } else {
-        showSnackBar(await getErrorMessage(awake_result["error_message"], awake_result["type"]));
-        finishIncubating();
+        showSnackBar(await getErrorMessage(awake_result["error_message"], awake_result["type"])); /* 에러 내용을 스낵바로 표시 */
+        finishIncubating(); /* incubating 종료 */
       }
     }
   }
 
-  //파견보내기 애니메이션이 모두 완료 되었는지 체크
+  // 파견보내기 애니메이션이 모두 완료 되었는지 체크
   final _isDispatchAnimationDone = true.obs;
   bool get isDispatchAnimationDone => _isDispatchAnimationDone.value;
   void setIsDispatchAnimationDone({required bool dispatchAnimationDone}) {
@@ -823,7 +824,7 @@ class IncubatorPageController extends GetxController
     if (data != null) {
       final result = await Get.to(
           () => SignWalletPage(
-                signReason: 'check_dispatch'.tr,
+                signReason: 'check_dispatch'.tr, /* 'check_dispatch': '방생 중이던 올채니를 이어서 방생하시겠습니까? */
               ),
           arguments: {
             "reason": 'dispatch_start',
@@ -836,7 +837,7 @@ class IncubatorPageController extends GetxController
     if (data != null) {
       final result = await Get.to(
           () => SignWalletPage(
-                signReason: 'check_minting'.tr,
+                signReason: 'check_minting'.tr, /* 'check_minting': '입양 중이던 올채니를 이어서 입양 하시겠습니까?' */
               ),
           arguments: {"reason": 'MINT'},
           duration: Duration(milliseconds: 500),

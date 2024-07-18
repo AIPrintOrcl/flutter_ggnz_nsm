@@ -40,6 +40,7 @@ Web3PrivateKey getCredentials(BigInt i) {
   return Web3PrivateKey.fromInt(i);
 }
 
+// 결과 대기
 Future<bool> waitForResult(int millisec) async {
   await Future.delayed(Duration(milliseconds: millisec), () => {print("wait for result")});
   return true;

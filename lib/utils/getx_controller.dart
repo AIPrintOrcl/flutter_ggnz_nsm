@@ -25,6 +25,7 @@ class ReactiveCommonController extends GetxController {
   final RxString deviceID = "".obs; /* 장치 ID를 관리 */
 
   // 서로 다른 스마트 계약에 대한 인스턴스
+  /// DeployedContract : 이더리움 블록체인에 배포된 스마트 계약과 상호 작용하기 위한 헬퍼 클래스
   late DeployedContract dAppContract;
   late DeployedContract baitContract;
   late DeployedContract ggnzContract;
@@ -65,10 +66,10 @@ class ReactiveCommonController extends GetxController {
   RxMap keystoreFile = {}.obs; /* keystore 파일을 관리 */
 
   /// 환경게이지
-  RxDouble environmentLevel = 360.0.obs;
-  double environmentBad = 240.0;
-  double environmentNormal = 480.0;
-  double environmentGood = 600.0;
+  RxDouble environmentLevel = 360.0.obs; /* 현재 환경게이지 - 초기 : 360 */
+  double environmentBad = 240.0; /* 환경게이지 나쁨 */
+  double environmentNormal = 480.0; /* 환경게이지 보통 */
+  double environmentGood = 600.0; /* 환경게이지 좋음 */
 
   /// 건강도 (건강도는 전역으로 가지고 있다 새롭게 play 버튼을 누르면 사라지게 작업?)
   RxDouble healthLevel = 0.0.obs;

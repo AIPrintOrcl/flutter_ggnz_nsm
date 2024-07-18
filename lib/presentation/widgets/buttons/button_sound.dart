@@ -23,12 +23,13 @@ class ButtonSound extends StatelessWidget {
         },
         child: Stack(
           children: [
-            Opacity(
+            // 소리 킴, 끔 이미지
+            Opacity( /// Opacity : 자식 위젯의 투명도를 조절. 1.0 : 완전 투명. 0.0 : 완전 불투명
                 opacity: buttonSoundController.isSoundOn ? 1 : 0,
-                child: Image.asset("assets/sound_on.png", width: 45)),
+                child: Image.asset("assets/sound_on.png", width: 45)), /* 소리 킴 이미지 */
             Opacity(
                 opacity: buttonSoundController.isSoundOn ? 0 : 1,
-                child: Image.asset("assets/sound_off.png", width: 45)),
+                child: Image.asset("assets/sound_off.png", width: 45)), /* 소리 끔 이미지*/
           ],
         ),
       );

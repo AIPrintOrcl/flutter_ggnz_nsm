@@ -17,28 +17,28 @@ class PageViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<IncubatorPageController>();
-    final pageController = PageController();
+    final pageController = PageController(); /// PageController : PageView 위젯과 함께 사용되어 페이지 기반의 스크롤링을 제어하는 데 사용되는 컨트롤러. 프로그래밍 방식으로 페이지를 이동하거나 현재 페이지의 위치를 얻을 있다.
 
     return Obx(() {
       return PageView.builder(
           controller: pageController,
-          physics: controller.isPlaying || controller.isIncubatorDone
-              ? const NeverScrollableScrollPhysics()
+          physics: controller.isPlaying || controller.isIncubatorDone /* 분양하기 버튼으로 분양 받은 상태 || 파츠 성장 완료 상태일 경우 */
+              ? const NeverScrollableScrollPhysics() /// NeverScrollableScrollPhysics : 스크롤이 전혀 불가능한 영역 : 스크롤이 전혀 불가능한 영역
               : null,
           itemCount: 3,
-          onPageChanged: (value) => controller.setIndicatorCount = value,
-          itemBuilder: ((context, index) {
+          onPageChanged: (value) => controller.setIndicatorCount = value, /* 알 별 현재 출력 페이지 인디케이터 체크 변수에 값 저장?? */
+          itemBuilder: ((context, index) { /* 인덱스 = 1 : 보통알, 2 : 특별한알, 3 : 프리미엄알 */
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                EggTitle(
+                EggTitle( // 인덱스에 따른 알 이름과 색 표시
                   index: index,
                 ),
-                EggAndMarimoView(
+                EggAndMarimoView( /* 인덱스에 따른 알 또는 마리모 상태의 캐릭터 */
                   index: index,
                   pageController: pageController,
                 ),
-                IncubatorPageButtonSet(
+                IncubatorPageButtonSet( /* 잠 깨우기/포기하기 버튼 */
                   index: index,
                 )
               ],
@@ -48,8 +48,9 @@ class PageViewWidget extends StatelessWidget {
   }
 }
 
+// 인덱스에 따른 알 이름과 색 표시
 class EggTitle extends StatelessWidget {
-  final int index;
+  final int index; /* 0 : 보통 알, 1 : 특별한 알, 2 : 프리미엄 알 */
   const EggTitle({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -63,18 +64,18 @@ class EggTitle extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                color: index == 0
-                    ? HexColor('347A8B')
-                    : index == 1
-                        ? HexColor('8B345B')
-                        : Colors.green),
+                color: index == 0 /* 보통 알 */
+                    ? HexColor('347A8B') /* 진녹색 */
+                    : index == 1 /* 특별한 알 */
+                        ? HexColor('8B345B') /* 진한 자주색 */
+                        : Colors.green), /* 프리미엄 알 - 그린 */
             child: Center(
                 child: Text(
               index == 0
-                  ? 'ggnz_egg'.tr
+                  ? 'ggnz_egg'.tr /* 'ggnz_egg': '보통 알' */
                   : index == 1
-                      ? 'special_egg'.tr
-                      : 'premium_egg'.tr,
+                      ? 'special_egg'.tr /* 'special_egg': '특별한 알' */
+                      : 'premium_egg'.tr, /* 'premium_egg': '프리미엄 알' */
               style: const TextStyle(
                 fontFamily: 'ONE_Mobile_POP_OTF',
                 color: Colors.white,
@@ -87,6 +88,7 @@ class EggTitle extends StatelessWidget {
   }
 }
 
+// 인덱스에 따른 알이 자고 있는 애니메이션 및 배경음.
 class EggSleep extends StatelessWidget {
   final int index;
   const EggSleep({Key? key, required this.index}) : super(key: key);
@@ -102,12 +104,13 @@ class EggSleep extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         height: 260,
         child: Image.asset(
-          "assets/egg_sleep$index.gif",
+          "assets/egg_sleep$index.gif", /* 보통알/특별알/프리미엄알 잠자는 알 gif */
           width: 200,
         ));
   }
 }
 
+// 인덱스에 따른 알이 깬 상태에서 점프하는 애니메이션 및 배경음
 class EggJump extends StatelessWidget {
   final int index;
   const EggJump({Key? key, required this.index}) : super(key: key);
@@ -391,7 +394,7 @@ class OnlyGopOrGogText extends StatelessWidget {
     );
   }
 }
-
+/* 인덱스에 따른 알 또는 마리모 상태의 캐릭터 */
 class EggAndMarimoView extends StatelessWidget {
   final index;
   final PageController pageController;
@@ -407,29 +410,29 @@ class EggAndMarimoView extends StatelessWidget {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              if (controller.arrangementItemImage.isNotEmpty)
+              if (controller.arrangementItemImage.isNotEmpty) /* 배치 아이템 이미지명을 없을 경우 */
                 ArrangementItemImage(
                   imageURL: controller.arrangementItemImage,
                 ),
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                switchInCurve: Curves.easeInOut,
-                child: controller.marimoList[0].isEmpty &&
-                        !controller.isPlaying &&
-                        !controller.isDispatchAnimationDone
-                    ? Container()
-                    : controller.marimoList[0].isEmpty &&
-                            !controller.isPlaying &&
-                            controller.isDispatchAnimationDone
-                        ? EggSleep(
-                            key: Key('eggSleepKey' + index.toString()),
+                duration: const Duration(milliseconds: 500), /// Duration : 시간 간격을 나타내는 다양한 속성과 메서드를 제공
+                switchInCurve: Curves.easeInOut, ///easeInOut : 시작할 때 천천히 시작하고, 중간에 속도가 빨라지다가 끝날 때 다시 천천히 끝나는 애니메이션 효과
+                child: controller.marimoList[0].isEmpty && /* 성장 단계별 마리모 이미지 누적 변수가 빈 값일 경우 */
+                        !controller.isPlaying && /* 부화 상태가 아닐 경우*/
+                        !controller.isDispatchAnimationDone /* 파견보내기 애니메이션이 모두 미완료일 경우 */
+                    ? Container() /* 아무일도 안 일어남 */
+                    : controller.marimoList[0].isEmpty && /* 빈 값 */
+                            !controller.isPlaying && /* 부화 상태가 아닐 때 */
+                            controller.isDispatchAnimationDone /* 파견보내기 애니메이션이 모두 완료 상태 */
+                        ? EggSleep( /* 알이 자고 있는 애니메이션 및 배경음. */
+                            key: Key('eggSleepKey' + index.toString()), /* 키 값 사용처 ?? */
                             index: index)
-                        : controller.marimoList[0].isEmpty &&
-                                controller.isPlaying
-                            ? EggJump(
+                        : controller.marimoList[0].isEmpty && /* 빈 값 */
+                                controller.isPlaying /* 부화 상태일 때 */
+                            ? EggJump( /* 인덱스에 따른 알이 깬 상태에서 점프하는 애니메이션 및 배경음 */
                                 key: Key('eggJumpKey' + index.toString()),
                                 index: index)
-                            : controller.isPartsTransition
+                            : controller.isPartsTransition /* 파츠 성장 진화시 트랜지션 이미지 상태 */
                                 ? Container(
                                     key: Key('emptyContainerKey'),
                                   )
@@ -440,7 +443,7 @@ class EggAndMarimoView extends StatelessWidget {
                                     child: MarimoImageStack(
                                         marimoList: controller.marimoList)),
               ),
-              controller.isPlaying || controller.isIncubatorDone
+              controller.isPlaying || controller.isIncubatorDone /* 부화 상태 또는 파츠 성장 완료 상태 일 경우 */
                   ? Container()
                   : Positioned(
                       width: Get.width,
@@ -534,6 +537,7 @@ class EggAndMarimoView extends StatelessWidget {
   }
 }
 
+// 잠 깨우기/포기하기 버튼
 class IncubatorPageButtonSet extends StatelessWidget {
   final index;
   const IncubatorPageButtonSet({Key? key, required this.index})
@@ -604,9 +608,9 @@ class IncubatorPageButtonSet extends StatelessWidget {
                 child: ButtonGGnz(
                   buttonText: controller.isPlaying
                       ? '포기하기'
-                      : controller.isIncubatorDone
-                          ? 'growth_complete'.tr
-                          : 'wake_up'.tr,
+                      : controller.isIncubatorDone /* 파츠 성장 완료 상태 */
+                          ? 'growth_complete'.tr /* 'growth_complete': '성장완료' */
+                          : 'wake_up'.tr, /* 'wake_up': '잠 깨우기' */
                   width: 179,
                   buttonBorderColor: HexColor("#555D42"),
                   buttonColor: HexColor("#DAEAD4"),
@@ -628,7 +632,7 @@ class IncubatorPageButtonSet extends StatelessWidget {
                     }
 
                     if (!controller
-                        .indicatorCountState[controller.indicatorCount]!) {
+                        .indicatorCountState[controller.indicatorCount]!) { /* 알 별 페이지 버튼 활성화 체크 변수 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
                       Get.dialog(GoToMarketDialog());
