@@ -37,9 +37,9 @@ class ItemDialog extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
                 child: Text(
-                  controller.isItemAmountZero
-                      ? 'empty_item_dialog_text'.tr
-                      : 'item_dialog_text'.tr,
+                  controller.isItemAmountZero /* 보유한 아이템이 존재 여부 확인 */
+                      ? 'empty_item_dialog_text'.tr /* 'empty_item_dialog_text': '특별한 아이템으로 올채니를 더 건강하게 성장시킬 수 있어요.   앗 사용 가능한 아이템이 없네요.  플레이 전에 상점을 방문하시겠습니까?' */
+                      : 'item_dialog_text'.tr, /* 'item_dialog_text': '특별한 아이템으로 올채니를 더 건강하게 성장시킬 수 있어요.  아이템을 선택해 볼까요?', */
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -47,7 +47,7 @@ class ItemDialog extends StatelessWidget {
                 height: 35,
               ),
               controller.isItemAmountZero
-                  ? ButtonGGnz(
+                  ? ButtonGGnz( /* 아이템이 없을 경우 */
                       width: 179,
                       buttonText: '상점으로 이동',
                       buttonBorderColor: HexColor("#555D42"),
@@ -62,7 +62,7 @@ class ItemDialog extends StatelessWidget {
                       onPressed: () {
                         Get.off(() => const MarketPage());
                       })
-                  : Container(
+                  : Container( /* 아이템이 있을 경우 */
                       padding: const EdgeInsets.only(left: 10, right: 20),
                       height: Get.height / 7,
                       child: ListView.separated(
@@ -77,7 +77,7 @@ class ItemDialog extends StatelessWidget {
                                 abilityType == ItemAbilityType.itembox.name ||
                                 abilityType == ItemAbilityType.egg.name ||
                                 abilityType == ItemAbilityType.mint.name;
-                            if (isEmptyItem) {
+                            if (isEmptyItem) { /* 아이템 존재 여부 */
                               return Container();
                             }
                             return const SizedBox(

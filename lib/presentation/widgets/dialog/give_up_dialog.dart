@@ -68,7 +68,7 @@ class GiveUpDialog extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
                 onPressed: () {
-                  incubatorPageController.reset();
+                  incubatorPageController.reset(); /* 파견보내기 버튼 함수 */
                   Get.back();
                 }),
             const SizedBox(

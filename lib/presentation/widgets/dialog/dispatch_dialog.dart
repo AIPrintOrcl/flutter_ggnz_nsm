@@ -47,10 +47,10 @@ class DispatchDialog extends StatelessWidget {
                               key: Key('start'),
                               width: Get.width / 3.5,
                               height: Get.width / 3.5,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
+                              child: ClipRRect( /// ClipRRect : 둥근 모서리를 가진 컨테이너를 만들거나 이미지, 카드 등의 위젯에 모서리를 둥글게 처리
+                                borderRadius: BorderRadius.circular(15), /// borderRadius : 모서리를 둥글게 할 반경을 설정
                                 child: Image.asset(
-                                    'assets/dispatch_ani.gif',
+                                    'assets/dispatch_ani.gif', /* 로켓이 우주로 가는 애니메이션 gif */
                                     width: Get.width / 3.5),
                               ),
                             )
@@ -61,7 +61,7 @@ class DispatchDialog extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.asset(
-                                    'assets/dispatch.png',
+                                    'assets/dispatch.png', /* 로켓 이미지 */
                                     width: Get.width / 3.5),
                               ),
                             ),
@@ -76,7 +76,7 @@ class DispatchDialog extends StatelessWidget {
                       ),
                       ButtonGGnz(
                           width: 179,
-                          buttonText: 'dispatch'.tr,
+                          buttonText: 'dispatch'.tr, /* 'dispatch': '방생하기' */
                           buttonBorderColor: HexColor("#555D42"),
                           buttonColor: HexColor("#DAEAD4"),
                           style: TextStyle(
@@ -90,12 +90,12 @@ class DispatchDialog extends StatelessWidget {
                             Get.back();
                             final result = await Get.to(
                                     () => SignWalletPage(
-                                  signReason: 'dispatch_start'.tr,
+                                  signReason: 'dispatch_start'.tr, /* 'dispatch_start': '올채니를 방생하시겠습니까?' */
                                 ),
                                 arguments: {
                                   "reason": 'dispatch_start',
                                   "amount":
-                                  (getx.healthLevel.value.toInt() ~/ 10)
+                                  (getx.healthLevel.value.toInt() ~/ 10) /* 건강도 레벨 값/10 */
                                 });
                           })),
                       Padding(

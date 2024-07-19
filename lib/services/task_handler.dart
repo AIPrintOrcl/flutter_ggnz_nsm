@@ -168,6 +168,7 @@ class GGNZIncubateHandler {
     }
   }
 
+  // 환경 상태에 따라 환경
   double getHealthPlusCount() {
     double countFromEnvironmentState =
         getx.environmentLevel.value < getx.environmentBad
@@ -182,6 +183,7 @@ class GGNZIncubateHandler {
     return max(random_health_value, 0.1);
   }
 
+  //
   bool getMarimoParts(int tick) {
     bool result = false;
 
@@ -250,7 +252,7 @@ class GGNZIncubateHandler {
         }
 
         // edit health level
-        /// 60초마다 건강 수준을 업데이트
+        // 60초마다 건강 수준을 업데이트
         health_plus_time++;
         if (health_plus_time >= 60) {
           getx.healthLevel.value += getHealthPlusCount();
@@ -300,25 +302,27 @@ class GGNZIncubateHandler {
     });
   }
 
+  // 부화 과정의 진행 상태를 복원하고, 중지된 동안의 시간을 반영하여 건강 레벨과 환경 레벨을 업데이트한 후 부화 과정을 다시 시작
   void resumeIncubating(int diffTime) async {
-    final remain_time = max(time_interval - current_time, 0);
-    current_time += diffTime;
+    final remain_time = max(time_interval - current_time, 0); /* 남은 시간은 0보다 작지 않는다. */
+    current_time += diffTime; /* 현재 시간 갱신 */
 
-    if (controller.eggAwake && current_time > 3) {
+    if (controller.eggAwake && current_time > 3) { /* 부화한 상태의 알이 현재 기간 3초 시간 경과할 경우 알이 깨어 있는 상태를 false로 설정 */
       controller.setEggAwake = false; // set eggAwake to false after 4 second
     }
 
     // set main timer
-    getx.environmentTime.value += min(diffTime, remain_time);
+    getx.environmentTime.value += min(diffTime, remain_time); /* 환경 시간 = min((현재시간-마지막사용시간), 남은 시간) */
 
-    health_plus_time += min(diffTime, remain_time);
-    if (health_plus_time >= 60) {
+    health_plus_time += min(diffTime, remain_time); /* 건강도 추가 시킬 시간 = min((현재시간-마지막사용시간), 남은 시간) */
+    if (health_plus_time >= 60) { /* 건강도 추가 시킬 시간이 60초가 넘을 경우 넘은 만큼 해당 시간 동안 건강 레벨에 추가 => 이 작업을 해주는 이유가 ?? */
       for (int i = 0; i < (health_plus_time ~/ 60); i++) {
         getx.healthLevel.value += getHealthPlusCount();
       }
       health_plus_time = health_plus_time % 60;
     }
 
+    // Marimo 부품 생성 및 게이지 설정
     final saveToDB = getMarimoParts(current_time); // make marimo parts
     controller.setMarimoGage(page_num, time_interval, current_time.toDouble());
 
@@ -350,9 +354,10 @@ class GGNZIncubateHandler {
     }, false);
   }
 
+  // 현재 진행 중인 부화 과정을 일시 중지하는 기능
   void pauseIncubating() {
-    isRunning = false;
-    incubatorTimer.cancel();
+    isRunning = false; /* 부화 과정 중지 */
+    incubatorTimer.cancel(); /* 타이머가 주기적으로 실행하지 않도록 설정 */
   }
 
   String getID() {

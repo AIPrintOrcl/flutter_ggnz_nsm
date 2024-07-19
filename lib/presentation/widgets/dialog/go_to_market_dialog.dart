@@ -4,6 +4,8 @@ import 'package:ggnz/presentation/pages/market/market_page.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+// 알이 없는 경우에서 잠 깨우기 버튼을 클릭할 경우 '깨울 알이 없습니다. 상점으로 이동하시겠습니까?' 확인 다이어로그
+// 구입하러 가기 - 상점 페이지로 이동
 class GoToMarketDialog extends StatelessWidget {
   const GoToMarketDialog({
     Key? key,

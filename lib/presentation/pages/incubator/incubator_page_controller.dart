@@ -40,7 +40,7 @@ import 'package:uuid/uuid.dart';
 class IncubatorPageController extends GetxController
     with WidgetsBindingObserver {
   GGNZIncubateHandler? incubator = null;
-  int? lastUsedTime = null;
+  int? lastUsedTime = null; /* 마지막 사용 시간 */
   bool? lastIsLocked = null;
 
   // 배치 아이템 이미지명
@@ -50,7 +50,7 @@ class IncubatorPageController extends GetxController
     _arrangementItemImage.value = image;
   }
 
-  //보유 아이템 수량 체크(잠 깨우기 시 선택할 수 있는 아이템 수량 체크)
+  // 보유 아이템 수량 체크(잠 깨우기 시 선택할 수 있는 아이템 수량 체크)
   final _isItemAmountZero = RxBool(getx.items.keys
       .where((key) =>
           getx.items[key]!['amount'] > 0 &&
@@ -113,7 +113,7 @@ class IncubatorPageController extends GetxController
   late final List<double> partsGageList;
   final RxDouble _maxPartsGage = 60.0.obs;
   double get maxPartsGage => _maxPartsGage.value;
-  final RxDouble _partsGage = 0.0.obs;
+  final RxDouble _partsGage = 0.0.obs; /* 현재 파츠 성장 게이지 */
   double get partsGage => _partsGage.value;
 
   //initialize foreground service
@@ -342,7 +342,7 @@ class IncubatorPageController extends GetxController
               : 'assets/bg2.gif'.obs;
   String get backgroundStateImage => _backgroundStateImage.value;
 
-  final Rx<String> _environmentState =
+  final Rx<String> _environmentState = /* 환경 상태 변수. 환경 레벨에 따라 나쁨/보통/좋음으로 변경된다. */
       getx.environmentLevel.value < getx.environmentBad
           ? EnvironmentState.bad.name.obs
           : getx.environmentLevel.value < getx.environmentNormal
@@ -540,8 +540,8 @@ class IncubatorPageController extends GetxController
 
   // 파견보내기 버튼 함수
   void reset() async {
-    _isDispatchAnimationDone.value = false;
-    finishIncubating();
+    _isDispatchAnimationDone.value = false; /* 파견 보내기 애니메이션 실행 중임을 표시 */
+    finishIncubating(); /*  */
   }
 
   //민팅 함수
@@ -752,14 +752,14 @@ class IncubatorPageController extends GetxController
   }
 
   void finishIncubating() async {
-    await updateUserDB(db, {
-      "marimo": FieldValue.delete(),
-      "environmentLevel": getx.environmentLevel.value,
+    await updateUserDB(db, { /* marimo 필드값 제거 */
+      "marimo": FieldValue.delete(), /* marimo 필드 삭제 */
+      "environmentLevel": getx.environmentLevel.value, /* 환경 레벨 값 저장 */
     }, false);
 
-    if (checkMintingStream != null) {
-      checkMintingStream!.cancel();
-      checkMintingStream = null;
+    if (checkMintingStream != null) { /* 민팅 스트림 null 값이 아닐 경우 */
+      checkMintingStream!.cancel(); /* 민팅 스트림 취소 */
+      checkMintingStream = null; /* 민팅 스트림 null 입력 */
     }
 
     if (incubator != null) {
@@ -820,6 +820,7 @@ class IncubatorPageController extends GetxController
     }
   }
 
+  // 호출X. 방생 실행 중 중단된 상태에서 다시 게임 메인 화면 실행했을 경우
   Future<void> checkDispatch(data) async {
     if (data != null) {
       final result = await Get.to(
@@ -833,6 +834,7 @@ class IncubatorPageController extends GetxController
     }
   }
 
+  // 호출X. 방생 실행 중 중단된 상태에서 다시 게임 메인 화면 실행했을 경우
   Future<void> checkMinting(data) async {
     if (data != null) {
       final result = await Get.to(

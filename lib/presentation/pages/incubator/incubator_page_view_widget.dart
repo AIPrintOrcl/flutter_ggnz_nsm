@@ -38,7 +38,7 @@ class PageViewWidget extends StatelessWidget {
                   index: index,
                   pageController: pageController,
                 ),
-                IncubatorPageButtonSet( /* 잠 깨우기/포기하기 버튼 */
+                IncubatorPageButtonSet( /* 건강도 및 gop/gog 잠금 위젯과 깨우기/포기하기 버튼 */
                   index: index,
                 )
               ],
@@ -130,27 +130,28 @@ class EggJump extends StatelessWidget {
   }
 }
 
+// 성장 단계별 마리모 이미지 누적 변수를 Stack으로 가져오기 위함
 class MarimoImageStack extends StatefulWidget {
-  final List<String> marimoList;
+  final List<String> marimoList; /* marimoList : 성장 단계별 마리모 이미지 누적 변수 */
   MarimoImageStack({Key? key, required this.marimoList}) : super(key: key);
 
   @override
-  State<MarimoImageStack> createState() => _MarimoImageStackState();
+  State<MarimoImageStack> createState() => _MarimoImageStackState(); /* createState() 사용처 ?? */
 }
 
 class _MarimoImageStackState extends State<MarimoImageStack> {
   @override
   void dispose() {
     imageCache.clear();
-    super.dispose();
+    super.dispose(); /* Flutter의 State 클래스나 GetxController 등에서 리소스를 정리하고 메모리 누수를 방지하기 위해 사용 */
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
+      alignment: AlignmentDirectional.bottomCenter, /// AlignmentDirectional.bottomCenter : 자식 위젯들이 Stack의 하단 중앙에 정렬
       children: widget.marimoList
-          .where((e) => e != '')
+          .where((e) => e != '') /* marimoList 값이 빈 값이 아닐 때 */
           .map(
             (e) => Image.asset(
               e,
@@ -163,6 +164,7 @@ class _MarimoImageStackState extends State<MarimoImageStack> {
   }
 }
 
+// 마리모의 현재 상태[나쁨/보통/좋음]에 따라 말풍선으로 감정표현을 나타냄.
 class EmotionBubble extends StatelessWidget {
   const EmotionBubble({
     Key? key,
@@ -179,7 +181,7 @@ class EmotionBubble extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Image.asset(
-              emotionController.ready,
+              emotionController.ready, /* 말풍선 READY 표시 gif */
               width: Get.width / 3.5,
               fit: BoxFit.contain,
             ),
@@ -205,6 +207,7 @@ class EmotionBubble extends StatelessWidget {
   }
 }
 
+// 마리모의 현재 상태[나쁨/보통/좋음]에 따라 말풍선으로 감정표현을 나타내는 컨트롤러
 class EmotionBubbleController extends GetxController {
   final List<String> badEmotion = [
     'assets/emotion/worst.gif',
@@ -215,48 +218,50 @@ class EmotionBubbleController extends GetxController {
     'assets/emotion/sweat.gif'
   ];
   final List<String> goodEmotion = [
-    'assets/emotion/good.gif',
+    'assets/emotion/good.gif', /* 말풍선 하트 표시 gif */
     'assets/emotion/excited.gif'
   ];
   RxString _emotion = ''.obs;
   String get emotion => _emotion.value;
 
-  String ready = 'assets/emotion/ready.gif';
-  RxInt _emotionNumber = 0.obs;
-  RxBool _isShowEmotion = false.obs;
+  String ready = 'assets/emotion/ready.gif'; /* 말풍선 READY 표시 gif */
+  RxInt _emotionNumber = 0.obs; /* 0, 1을 반복 => 감정 표현을 순차적으로 반복 실행하기 위함 */
+  RxBool _isShowEmotion = false.obs; /* 감정 표현이 보여주는 여부 */
   bool get isShowEmotion => _isShowEmotion.value;
 
-  late Timer listenEnvironmentLevelTimer;
+  late Timer listenEnvironmentLevelTimer; /* 환경 레벨의 주기적인 업데이트를 위해 사용 ?? */
 
   final emotionAudioController = Get.find<EmotionAudioController>();
 
   @override
   void onInit() {
-    setEmotion();
-    listenEnvironmentLevel();
+    setEmotion(); /* 마리모 상태에 따라 감정 표현을 순차적으로 반복 실행 */
+    listenEnvironmentLevel(); /* 환경 레벨에 주기적인 업데이트를 통해 감정을 업데이트하고 부화하지 않고 파츠 성장이 미완료된 상태에서는 감정 표현을 숨긴다. */
     super.onInit();
   }
 
+  // 환경 레벨에 주기적인 업데이트를 통해 감정을 업데이트하고 부화하지 않고 파츠 성장이 미완료된 상태에서는 감정 표현을 숨긴다.
   void listenEnvironmentLevel() {
     final incubatorController = Get.find<IncubatorPageController>();
 
     listenEnvironmentLevelTimer =
-        Timer.periodic(const Duration(seconds: 300), (timer) {
-      setEmotion();
+        Timer.periodic(const Duration(seconds: 300), (timer) { /* 5분 간격으로 반복 실행되는 작업을 설정 */
+      setEmotion(); /* 환경 레벨 따라 주기적인 감정을 업데이트하기 위함 */
 
-      if (!incubatorController.isPlaying &&
-          !incubatorController.isIncubatorDone) {
-        _isShowEmotion.value = true;
+      if (!incubatorController.isPlaying && /* 부화하지 않고 */
+          !incubatorController.isIncubatorDone) { /* 파츠 성장 미완료된 상태 일 경우 */
+        _isShowEmotion.value = true; /* 감정 표현을 보여줌 */
         emotionAudioController.openAudioPlayer(
             url: 'assets/sound/emotion_imoticon.mp3');
-        Future.delayed(Duration(milliseconds: 1850), () {
-          imageCache.clear();
-          _isShowEmotion.value = false;
+        Future.delayed(Duration(milliseconds: 1850), () { /* 1.85초 지연 후 실행 */ /// Future.delayed : 지정된 시간 동안 지연된 후에 실행할 작업을 정의하는 데 사용
+          imageCache.clear(); /* 이미지 캐시를 비워 메모리 사용을 최적화 */
+          _isShowEmotion.value = false; /* 감정 표현을 안 보여줌 */
         });
       }
     });
   }
 
+  // 마리모 상태에 따라 감정 표현을 순차적으로 반복 실행
   void setEmotion() {
     _emotionNumber.value = _emotionNumber.value % 2 == 0 ? 1 : 0;
     getx.environmentLevel.value < 240.0
@@ -273,6 +278,7 @@ class EmotionBubbleController extends GetxController {
   }
 }
 
+// 마리모의 건강도 숫자와 게이지 위젯
 class HealthBubble extends StatelessWidget {
   const HealthBubble({Key? key}) : super(key: key);
 
@@ -287,7 +293,7 @@ class HealthBubble extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/heart.gif',
+                'assets/heart.gif', /* 하트가 두근두근 애니메이션 gif */
                 width: Get.width / 14,
               ),
               const SizedBox(
@@ -295,6 +301,7 @@ class HealthBubble extends StatelessWidget {
               ),
               Stack(
                 children: <Widget>[
+                  // 건강도 숫자 표시
                   Text(
                     incubatorPageController.healthLevel.toInt().toString(),
                     style: TextStyle(
@@ -318,6 +325,7 @@ class HealthBubble extends StatelessWidget {
               ),
             ],
           ),
+          // 건강도 게이지
           Container(
             width: 100,
             decoration: BoxDecoration(
@@ -326,7 +334,7 @@ class HealthBubble extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Obx(
-                () => LinearProgressIndicator(
+                () => LinearProgressIndicator( /// LinearProgressIndicator : Flutter에서 진행 상황을 시각적으로 표시하기 위한 위젯
                   minHeight: 6,
                   backgroundColor: Colors.black26,
                   valueColor:
@@ -335,7 +343,7 @@ class HealthBubble extends StatelessWidget {
                           incubatorPageController.maxPartsGage == 0.0
                       ? 0.0
                       : incubatorPageController.partsGage /
-                          incubatorPageController.maxPartsGage,
+                          incubatorPageController.maxPartsGage, /* 현재 게이지 / max 게이지 */
                 ),
               ),
             ),
@@ -346,6 +354,7 @@ class HealthBubble extends StatelessWidget {
   }
 }
 
+// gop/gog 전용 아닐 경우 잠금 위젯
 class OnlyGopOrGogText extends StatelessWidget {
   final index;
   const OnlyGopOrGogText({Key? key, required this.index}) : super(key: key);
@@ -357,15 +366,15 @@ class OnlyGopOrGogText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Image.asset(
-          'assets/lock.png',
+          'assets/lock.png', /* 자물쇠 이미지 */
         ),
         Stack(
           children: <Widget>[
-            Text(
-              index == 1
-                  ? 'need_gop'.tr
-                  : index == 2
-                      ? 'need_gog'.tr
+            Text( /* 밑에 초록 글찌 */
+              index == 1 /* 특별한 알일 경우 */
+                  ? 'need_gop'.tr  /* 'need_gop': 'GOP 전용' */
+                  : index == 2 /* 프리미엄한알 */
+                      ? 'need_gog'.tr /* 'need_gog': 'GOG 전용' */
                       : '',
               style: TextStyle(
                 fontFamily: 'ONE_Mobile_POP_OTF',
@@ -376,7 +385,7 @@ class OnlyGopOrGogText extends StatelessWidget {
                   ..color = HexColor('#555D42'),
               ),
             ),
-            Text(
+            Text( /* 앞에 흰 글지 */
               index == 1
                   ? 'need_gop'.tr
                   : index == 2
@@ -440,12 +449,12 @@ class EggAndMarimoView extends StatelessWidget {
                                     key: const Key('marimoStackKey'),
                                     alignment: Alignment.bottomCenter,
                                     height: 260,
-                                    child: MarimoImageStack(
-                                        marimoList: controller.marimoList)),
+                                    child: MarimoImageStack( /* 성장 단계별 마리모 이미지 누적 변수를 Stack으로 가져오기 위함 */
+                                        marimoList: controller.marimoList)), /* marimoList : 성장 단계별 마리모 이미지 누적 변수 */
               ),
               controller.isPlaying || controller.isIncubatorDone /* 부화 상태 또는 파츠 성장 완료 상태 일 경우 */
-                  ? Container()
-                  : Positioned(
+                  ? Container() /* 아무일도 안 일어남 */
+                  : Positioned( /// Positioned : Stack 위젯의 자식 위젯이 어디에 위치할지를 제어하는 위젯입니다. Positioned는 자식 위젯의 위치와 크기를 지정할 수 있습니다.
                       width: Get.width,
                       top: Get.height / 5,
                       child: Container(
@@ -453,31 +462,31 @@ class EggAndMarimoView extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
+                            GestureDetector( ///GestureDetector : Flutter에서 사용자 제스처를 감지하고 처리하는 위젯. 사용자의 터치, 스와이프, 탭, 드래그 등의 다양한 제스처를 감지하고 해당 제스처에 따라 특정 작업을 수행
                                 onTap: () {
-                                  if (controller.indicatorCount == 0) {
+                                  if (controller.indicatorCount == 0) { /* 알 별 현재 출력 페이지 인디케이터 체크 변수가 0일 때 */
                                     return;
                                   }
                                   controller.setIsPageViewClick();
-                                  pageController.previousPage(
-                                      duration: Duration(milliseconds: 500),
-                                      curve: Curves.linear);
+                                  pageController.previousPage( /// PageController.previousPage : 현재 페이지에서 이전 페이지로 애니메이션을 통해 전환
+                                      duration: Duration(milliseconds: 500), /// 페이지 전환 애니메이션의 지속 시간
+                                      curve: Curves.linear); /// 애니메이션의 곡선
                                 },
-                                child: Opacity(
-                                  opacity: controller.isPageViewClick
+                                child: Opacity( /// Opacity : Flutter에서 위젯의 투명도를 조절하는 데 사용되는 위젯. 0.0 : 완전 투명. 1.0 : 완전 불투명
+                                  opacity: controller.isPageViewClick /* 페이지 뷰 이동 했을 경우 */ /// opacity : 위젯의 투명도 수준을 설정
                                       ? 0
                                       : controller.indicatorCount == 0
                                           ? 0.5
                                           : 1,
                                   child: Container(
-                                    decoration: BoxDecoration(
+                                    decoration: BoxDecoration( /// BoxDecoration : Container 위젯에 다양한 시각적 효과를 적용하기 위해 사용되는 클래스입니다. 이 클래스를 사용하면 배경색, 테두리, 그림자, 경계 반경 등 다양한 속성을 설정
                                         borderRadius:
                                             BorderRadius.circular(100),
                                         border: Border.all(
                                             width: 2,
                                             color: HexColor('555D42'))),
                                     child: Container(
-                                      child: CircleAvatar(
+                                      child: CircleAvatar( /// CircleAvatar : Flutter에서 원형 프로필 사진이나 아이콘을 표시하는 데 사용되는 위젯
                                           backgroundColor: HexColor('DAEAD4'),
                                           child: Icon(Icons.arrow_left,
                                               size: 35,
@@ -529,7 +538,7 @@ class EggAndMarimoView extends StatelessWidget {
                     : Get.height / 6,
                 right:
                     controller.isIncubatorDone ? Get.width / 6 : Get.width / 5,
-                child: EmotionBubble(),
+                child: EmotionBubble(), /* 마리모의 현재 상태[나쁨/보통/좋음]에 따라 말풍선으로 감정표현을 나타냄. */
               ),
             ],
           ),
@@ -537,7 +546,7 @@ class EggAndMarimoView extends StatelessWidget {
   }
 }
 
-// 잠 깨우기/포기하기 버튼
+// 건강도 및 gop/gog 잠금 위젯과 깨우기/포기하기 버튼
 class IncubatorPageButtonSet extends StatelessWidget {
   final index;
   const IncubatorPageButtonSet({Key? key, required this.index})
@@ -553,12 +562,12 @@ class IncubatorPageButtonSet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
-                child: index == 0 ||
-                        controller.isPlaying ||
-                        (index == 1 && getx.gop.value > 0) ||
-                        (index == 2 && getx.gog.value > 0)
-                    ? HealthBubble()
-                    : OnlyGopOrGogText(index: index),
+                child: index == 0 || /* 보통알 일 경우 */
+                        controller.isPlaying || /* 부화한 상태 */
+                        (index == 1 && getx.gop.value > 0) || /* 특별한알 구입 ?? */
+                        (index == 2 && getx.gog.value > 0) /* 프리미엄알 구입 ?? */
+                    ? HealthBubble() /* 마리모의 건강도 숫자와 게이지 위젯 */
+                    : OnlyGopOrGogText(index: index), /* gop/gog 전용 아닐 경우 잠금 위젯 */
               ),
               /*Expanded(
                 child: ButtonGGnz(
@@ -604,6 +613,7 @@ class IncubatorPageButtonSet extends StatelessWidget {
               const SizedBox(
                 height: 5,
               ),
+              // 잠 깨우기/포기하기 버튼
               Expanded(
                 child: ButtonGGnz(
                   buttonText: controller.isPlaying
@@ -622,7 +632,7 @@ class IncubatorPageButtonSet extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                   onPressed: () {
-                    if (controller.isIncubatorDone) {
+                    if (controller.isIncubatorDone) { /* 파츠 성장 완료 상태 => '성장완료' 버튼 클릭 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
                       Get.dialog(const DispatchDialog(),
@@ -632,18 +642,18 @@ class IncubatorPageButtonSet extends StatelessWidget {
                     }
 
                     if (!controller
-                        .indicatorCountState[controller.indicatorCount]!) { /* 알 별 페이지 버튼 활성화 체크 변수 */
+                        .indicatorCountState[controller.indicatorCount]!) { /* !알 별 페이지 버튼 활성화 체크 변수[알 별 현재 출력 페이지 인디케이터 체크 변수] => 알 존재하지 않을 경우 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
-                      Get.dialog(GoToMarketDialog());
+                      Get.dialog(GoToMarketDialog()); /* 알이 없는 경우에서 잠 깨우기 버튼을 클릭할 경우 '깨울 알이 없습니다. 상점으로 이동하시겠습니까?' 확인 다이어로그 */
                       return;
                     }
 
-                    if (!controller.isPlaying) {
+                    if (!controller.isPlaying) { /* 부화되지 않은 상태 */
                       controller.checkStartingServer();
                     }
 
-                    if (controller.isPlaying) {
+                    if (controller.isPlaying) { /* 부화된 상태 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
                       Get.dialog(GiveUpDialog());

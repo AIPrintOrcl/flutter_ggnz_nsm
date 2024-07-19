@@ -6,6 +6,7 @@ import 'package:ggnz/presentation/pages/incubator/incubator_page.dart';
 import 'package:ggnz/utils/audio_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+// 로그인 후 현재 진행에 맞게 사용자에게 올채니를 어떻게 할지 메시지로 확인
 class SignWalletPage extends StatelessWidget {
   final String signReason;
   const SignWalletPage({Key? key, required this.signReason}) : super(key: key);

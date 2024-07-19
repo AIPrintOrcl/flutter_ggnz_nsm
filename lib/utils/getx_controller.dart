@@ -11,7 +11,7 @@ import 'package:ggnz/presentation/pages/collecting/collecting_view_controller.da
 import 'package:ggnz/presentation/pages/collecting/mission_view_controller.dart';
 import 'package:ggnz/services/main_timer.dart';
 
-/// 전역으로 가지고 있어야 할 데이터
+// 전역으로 가지고 있어야 할 데이터
 class ReactiveCommonController extends GetxController {
   //baobab or main net
   // 사용 모드
