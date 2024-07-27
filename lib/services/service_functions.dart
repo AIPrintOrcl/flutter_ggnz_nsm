@@ -27,9 +27,10 @@ int getChainID(String mode) {
 }
 
 String getUserCollectionName(String mode) { /* 모드에 따른 사용자명 반환 */
-  // return mode == "abis"? "users": "users_test";
-  var user = LoginController.instance.getUser!.email;
-  return mode == "abis" ? "users": user!;
+  //   return mode == "userId"? "users_v2": "users_test";
+  // var user = LoginController.instance.getUser!.email;
+  // return mode == "userId" ? "users_v2": user!;
+  return mode == "userId"? "users_v2": "users_test";
 }
 
 String getMagicWord(String mode) {

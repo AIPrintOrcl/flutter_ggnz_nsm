@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "732914892685-rkp0vvtk61tendb939huctd7q7ttfb6j.apps.googleusercontent.com",
+          "client_id": "732914892685-ud8e3vig97iab4hspmpt8lqp8hlgatk0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.neeznggnz.tadpolediary",
-            "certificate_hash": "ba09e4d400407796adfe76786263486f9cc3f652"
+            "certificate_hash": "56b9ff58ecbe63cacfb076d578c2e9b0db44ee0c"
           }
         },
         {

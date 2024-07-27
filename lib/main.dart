@@ -1,9 +1,9 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/firebase_options.dart';
+import 'package:ggnz/presentation/pages/incubator/incubator_page_controller.dart';
 import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/pages/main_page_loading.dart';
 import 'package:ggnz/presentation/pages/market/market_page_controller.dart';
@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
         Get.put(LoginController()); /* 로그인 */
         Get.put(WalletPageController()); /* 지갑 패이지 */
         Get.put(ServiceAppInit()); /* loading 중 필요한 데이터 체크 */
-        Get.put(CheckAppStateController());
+        Get.put(CheckAppStateController()); /* 앱이 활성화/비활성화 될 때 특정 동작 수행. WidgetBindingObserver를 통해 앱 라이프사이클의 상태 변화 감지/미감지 및 getx.isBackground를 true/false로 변경 */
       })),
     );
   }

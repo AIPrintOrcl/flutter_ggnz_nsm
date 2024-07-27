@@ -635,14 +635,13 @@ class IncubatorPageButtonSet extends StatelessWidget {
                     if (controller.isIncubatorDone) { /* 파츠 성장 완료 상태 => '성장완료' 버튼 클릭 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
-                      Get.dialog(const DispatchDialog(),
+                      Get.dialog(const DispatchDialog(), /*  */
                           transitionCurve: Curves.decelerate,
                           transitionDuration: const Duration(milliseconds: 500));
                       return;
                     }
 
-                    if (!controller
-                        .indicatorCountState[controller.indicatorCount]!) { /* !알 별 페이지 버튼 활성화 체크 변수[알 별 현재 출력 페이지 인디케이터 체크 변수] => 알 존재하지 않을 경우 */
+                    if (!controller.indicatorCountState[controller.indicatorCount]!) { /* !알 별 페이지 버튼 활성화 체크 변수[알 별 현재 출력 페이지 인디케이터 체크 변수] => 알 존재하지 않을 경우 */
                       audioController.openAudioPlayer(
                           url: 'assets/sound/click_menu.mp3');
                       Get.dialog(GoToMarketDialog()); /* 알이 없는 경우에서 잠 깨우기 버튼을 클릭할 경우 '깨울 알이 없습니다. 상점으로 이동하시겠습니까?' 확인 다이어로그 */

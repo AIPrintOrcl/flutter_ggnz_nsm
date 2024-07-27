@@ -95,7 +95,7 @@ class CollectionTabs extends StatelessWidget {
                             ? 1
                             : 0.5,
                     child: Container(
-                        width: Get.width / 4.3,
+                        width: Get.width / 3,
                         height: 48,
                         decoration: BoxDecoration(
                             color: HexColor('#F4FBEE'),

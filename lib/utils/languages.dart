@@ -6,13 +6,13 @@ class Languages extends Translations {
         'ko_KR': {
           'start': '시작하기',
           'credit': 'Credit',
-          'create_a_olchaeneez_wallet': '올채니즈 지갑을 만들어 보세요!',
+          'create_a_olchaeneez_wallet': '올채니즈를 키워보세요!',
           'craete_olchaeneez_wallet_text':
               '올채니즈는 깨끗한 환경에서 건강하게 자라납니다. 휴대폰 배터리 사용을 줄일수록 연못의 환경이 더 좋아져요.  환경을 깨끗하게 하고 올채니즈를 건강하게 키워 더 많은 보상을 받으세요!',
-          'create_a_wallet': '지갑 만들기',
-          'private_key': '개인키',
+          'create_a_wallet': '신규 유저',
+          'private_key': '유저 ID',
           'add_account': '계정 추가',
-          'add_account_text': '가져올 계정의 개인키를 입력해주세요.',
+          'add_account_text': '가져올 계정의 유저 ID를 입력해주세요.',
 
           'password_text1': '비밀번호 6자리를 설정해 주세요',
           'password_text2': '비밀번호 6자리를 입력해 주세요',
@@ -136,17 +136,20 @@ class Languages extends Translations {
           'get_rewards': '보상을 받으시겠습니까?',
           'wants_to_buy_egg': '깨울 알이 없습니다. 알 구매란으로 이동하시겠습니까?',
           'dispatch_device_error': '이미 파견된 올채니 입니다.',
+          'change_user_to_v2_1': '원활한 플레이 환경을 위해 서버를 변경하였습니다.',
+          'change_user_to_v2_2': '이전 데이터는 저장되어 있으며 빠른 시일 내에 동기화 작업 진행 예정입니다.',
+          'social_login': '소셜 로그인이 되었습니다.'
         },
         'en_US': {
           'start': 'start',
           'credit': 'Credit',
-          'create_a_olchaeneez_wallet': 'Create a Olchaeneez wallet!',
+          'create_a_olchaeneez_wallet': 'Create a Olchaeneez!',
           'craete_olchaeneez_wallet_text':
               'Olchaeneez grows healthy in a clean environment. The less you use your phone battery, the better the pond environment becomes.  Clean the environment and grow a healthy Olchaeneez for more rewards!',
-          'create_a_wallet': 'create_a_wallet',
-          'private_key': 'Private Key',
+          'create_a_wallet': 'create new',
+          'private_key': 'UserId',
           'add_account': 'Add Account',
-          'add_account_text': 'Enter the private key of the account to import.',
+          'add_account_text': 'Enter the userId of the account to import.',
           'password_text1': 'Please set a 6-digit password',
           'password_text2': 'Please enter a 6-digit password',
           'password': 'Password',
@@ -289,7 +292,9 @@ class Languages extends Translations {
           'wants_to_buy_egg':
               'There are no eggs to wake up. Do you want to go to the egg market?',
           'get_rewards': 'Do you wants to get rewards?',
-          'dispatch_device_error': "This Olchaeneez is already dispatched."
-        },
+          'dispatch_device_error': "This Olchaeneez is already dispatched.",
+          'change_user_to_v2_1': 'The server has been changed for a smooth play experience.',
+          'change_user_to_v2_2': 'Previous data has been saved and synchronization will be carried out as soon as possible.',
+          'social_login': 'Social login Done!.'        },
       };
 }

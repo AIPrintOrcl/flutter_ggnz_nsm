@@ -1,3 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
+import 'package:firebase_ui_oauth_apple/firebase_ui_oauth_apple.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/login/login_controller.dart';
@@ -6,8 +10,6 @@ import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
 import 'package:ggnz/presentation/pages/password/password_page.dart';
 import 'package:ggnz/utils/audio_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:ggnz/services/service_functions.dart';
-import 'package:provider/provider.dart';
 
 // 사용자가 새로운 지갑을 생성하거나 기존 지갑을 가져올 수 있도록 안내하는 페이지.
 class MakeWalletPage extends StatelessWidget {
@@ -67,7 +69,7 @@ class MakeWalletPage extends StatelessWidget {
                     Column(
                       children: [
                         ButtonGGnz(
-                            buttonText: 'LOGIN'.tr, /* 로그인 버튼 */
+                            buttonText: 'LOGIN',//'create_a_wallet'.tr,
                             width: Get.width / 2.7,
                             buttonBorderColor: HexColor("#555D42"),
                             buttonColor: HexColor("#DAEAD4"),
@@ -84,13 +86,27 @@ class MakeWalletPage extends StatelessWidget {
                               audioController.openAudioPlayer(
                                   url: 'assets/sound/click_menu.mp3');
                               /// 구글 로그인
-                              Get.to(() => LoginPage());
+                              Get.to(() => StreamBuilder<User?>(
+                                  stream: FirebaseAuth.instance.authStateChanges(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return SignInScreen(
+                                        providers: [
+                                          GoogleProvider(clientId: '441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com'),
+                                          AppleProvider()
+                                        ],
+                                      );
+                                    }
+                                    return const PasswordPage();
+                                  }
+                              )
+                              );
                             }),
-                        const SizedBox(
+                        /*const SizedBox(
                           width: 10,
                         ),
                         ButtonGGnz(
-                            buttonText: 'create_a_wallet'.tr, /* 지갑 만들기 버튼 */
+                            buttonText: 'IMPORT UserId', *//* IMPORT 버튼 *//*
                             width: Get.width / 2.7,
                             buttonBorderColor: HexColor("#555D42"),
                             buttonColor: HexColor("#DAEAD4"),
@@ -102,34 +118,10 @@ class MakeWalletPage extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                             onPressed: () {
-                              final audioController =
-                                  Get.find<AudioController>();
-                              audioController.openAudioPlayer(
-                                  url: 'assets/sound/click_menu.mp3');
-                              Get.to(() => const PasswordPage(), /* 패스워드 패이지 이동 */
+                              Get.to(() => const ImportPage(), *//* 임폴트 페이지 이동 *//*
                                   transition: Transition.fadeIn,
                                   duration: const Duration(milliseconds: 500));
-                            }),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ButtonGGnz(
-                            buttonText: 'IMPORT', /* IMPORT 버튼 */
-                            width: Get.width / 2.7,
-                            buttonBorderColor: HexColor("#555D42"),
-                            buttonColor: HexColor("#DAEAD4"),
-                            isBoxShadow: true,
-                            style: TextStyle(
-                              fontFamily: 'ONE_Mobile_POP_OTF',
-                              color: HexColor("#555D42"),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            onPressed: () {
-                              Get.to(() => const ImportPage(), /* 임폴트 페이지 이동 */
-                                  transition: Transition.fadeIn,
-                                  duration: const Duration(milliseconds: 500));
-                            })
+                            })*/
                       ],
                     ),
                   ],
@@ -223,19 +215,11 @@ class ImportPage extends StatelessWidget {
                     final audioController = Get.find<AudioController>();
                     audioController.openAudioPlayer(
                         url: 'assets/sound/click_menu.mp3');
-                    /// 개인키의 조건
-                    if (importTextController.text.length == 64
-                        || importTextController.text.length == 66
-                        && importTextController.text.substring(0, 2) == "0x"
-                    ) {
-                      Get.back();
-                      Get.to(() => const PasswordPage(), /* 패스워드 패이지 이동 */
-                          arguments: {"key": importTextController.text},
-                          transition: Transition.fadeIn,
-                          duration: const Duration(milliseconds: 500));
-                    } else {
-                      showSnackBar("개인키를 확인해주세요.");
-                    }
+                    Get.back();
+                    Get.to(() => const PasswordPage(),
+                        arguments: {"key": importTextController.text},
+                        transition: Transition.fadeIn,
+                        duration: const Duration(milliseconds: 500));
                   }),
             ],
           ),

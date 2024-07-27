@@ -8,7 +8,7 @@ import 'package:ggnz/presentation/pages/collecting/encyclopedia_view_controller.
 import 'package:ggnz/presentation/pages/collecting/mission_view_controller.dart';
 
 class CollectingPageController extends GetxController {
-  List<String> tabNames = ['도감', '콜렉팅 미션', '일반 미션'];
+  List<String> tabNames = ['도감', '콜렉팅 미션' ]; //'일반 미션'
 
   final _selectedTabIndex = 0.obs;
   int get selectedTabIndex => _selectedTabIndex.value;
@@ -17,7 +17,7 @@ class CollectingPageController extends GetxController {
   List<Widget> seletedTabWidget = [
     const CollectingPageEncyclopediaView(),
     const CollectingPageCollectingView(),
-    const CollectingPageMissionView()
+    // const CollectingPageMissionView()
   ];
   final encyclopediaController = Get.put(EncyclopediaViewController());
   final collectingController = Get.put(CollectingViewController());

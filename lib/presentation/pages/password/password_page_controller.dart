@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/presentation/pages/incubator/incubator_page.dart';
 import 'package:ggnz/presentation/pages/incubator/pre_incubator_page.dart';
@@ -5,8 +6,15 @@ import 'package:ggnz/web3dart/credentials.dart';
 import 'package:ggnz/utils/getx_controller.dart';
 import 'package:ggnz/web3dart/crypto.dart';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../services/service_functions.dart';
+import '../../../utils/utility_function.dart';
 
 class PasswordPageController extends GetxController {
+  var first = true;
   // 비밀번호 주의사항 체크
   final _isClicked = false.obs;
   bool get isClicked => _isClicked.value;
@@ -20,7 +28,7 @@ class PasswordPageController extends GetxController {
   final _isFirstPasswordDone = false.obs;
   bool get isFirstPasswordDone => _isFirstPasswordDone.value;
 
-  late final bool isWalletExist;
+  late final bool isUserIdExist;
 
   final _keyPadNums = [
     ["2", "6", "4"],
@@ -73,22 +81,32 @@ class PasswordPageController extends GetxController {
 
     if (_passWord.value.length == 6) {
       //check password with existing keystore file
-      if (isWalletExist) {
+      if (isUserIdExist || Get.arguments != null && Get.arguments["key"] != null) {
         try {
-          final walletFile = await Wallet.getJsonFromFile();
-          getx.credentials = Wallet.fromJson(walletFile, '${_passWord.value}').privateKey;
+          var resultCount = await getx.db.collection(getUserCollectionName(getx.mode))
+              .where(firestore.FieldPath.documentId, isEqualTo: getx.walletAddress.value == "" ? Get.arguments["key"] : getx.walletAddress.value)
+              .where("pw", isEqualTo: _passWord.value)
+              .count()
+              .get();
 
-          //privatekey
-          //print("test private key: " + bytesToHex(getx.credentials.privateKey));
+          if (resultCount.count! < 1) {
+            throw ArgumentError();
+          }
 
-          Get.off(() => const IncubatorPage(), /* 게임 메인 페이지로 이동 */
-              transition: Transition.fadeIn,
-              duration: const Duration(milliseconds: 500)
+          if (!isUserIdExist) {
+            final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+            sharedPrefs.setString('userId', Get.arguments["key"]);
+            getx.walletAddress.value = Get.arguments["key"];
+          }
+
+          Get.off(() => const IncubatorPage(),
+            transition: Transition.fadeIn,
+
           );
           return;
         } on ArgumentError {
           if (!Get.isSnackbarOpen) {
-            Get.snackbar('지갑주소 비밀번호와 일치하지 않습니다.', '', duration: Duration(seconds: 1));
+            Get.snackbar('비밀번호가 일치하지 않습니다.', '', duration: Duration(seconds: 1));
           }
           _passWord.value = "";
           return;
@@ -120,29 +138,39 @@ class PasswordPageController extends GetxController {
     }
 
     if (_confirmPassWord.value.length == 6 &&
-        _recordPassWord.value == _confirmPassWord.value) { /* 비밀번호 설정 완료 => 비밀번호가 6자리 이고 확인까지 끝난 비밀번호 */
+        _recordPassWord.value == _confirmPassWord.value && first) {
+      first = false;
 
-      late final credential;
+      // find exist user
+      final tempDoc = await getx.db.collection(getUserCollectionName(getx.mode))
+          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser?.uid.toString())
+          .where('email', isEqualTo: FirebaseAuth.instance.currentUser?.email.toString())
+          .get();
 
-      // Get.arguments에서 "key" 값을 가져와서 조건에 따라 credential 초기화
-      if (Get.arguments != null && Get.arguments["key"] != null) {
-        credential = Web3PrivateKey.fromHex(Get.arguments["key"]); /* // 16진수 개인 생성 */
+      late final userDoc;
+      if (tempDoc.size == 0) {
+        //create new userId
+        userDoc = await getx.db.collection(getUserCollectionName(getx.mode)).doc();
+        await userDoc.set({
+          "pw": _confirmPassWord.value,
+          'uid': FirebaseAuth.instance.currentUser?.uid.toString(),
+          'email': FirebaseAuth.instance.currentUser?.email.toString()
+        });
       } else {
-        credential = Web3PrivateKey.createRandom(Random.secure()); /* 임의의 랜덤값으로 초기화 */
+        userDoc = await tempDoc.docs[0];
       }
 
-      //create new wallet
-      /// 지갑 생성
-      Wallet wallet = Wallet.createNew(
-          credential,
-          _confirmPassWord.value, /* 키패드로 생성된 비밀번호 */
-          Random.secure()
-      );
+      final userId = userDoc.id;
+      final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+      sharedPrefs.setString('uid', FirebaseAuth.instance.currentUser?.uid.toString() ?? '');
+      sharedPrefs.setString('userId', userId);
+      getx.walletAddress.value = userId;
+      getx.uid.value = FirebaseAuth.instance.currentUser?.uid.toString() ?? '';
+      setWalletAddress = userId;
 
-      setWalletAddress = wallet.privateKey.address.hexEip55; /* 지갑 주소를 EIP-55 표준 형식으로 변경 후 변수에 저장 */
-      getx.walletAddress.value = wallet.privateKey.address.hexEip55; /* 지갑 주소를 getx 상태 관리 객체 변수에 저장 */
-      getx.credentials = wallet.privateKey; /* 지갑 개인키를 getx 상태 관리 객체 변수에 저장 => 자격증명 설정 */
-      wallet.saveAsJsonFile(data: wallet.toJson()); /* 생성된 지갑 정보를 앱 자체 JSON 파일로 저장 */
+      await updateUserDB(getx.db, {
+        "pw": _confirmPassWord.value,
+      }, false);
 
       await getx.getInitialValue();
 
@@ -160,7 +188,7 @@ class PasswordPageController extends GetxController {
 
   @override
   void onInit() {
-    isWalletExist = getx.isWalletExist;
+    isUserIdExist = getx.isUserIdExist;
     super.onInit();
   }
 

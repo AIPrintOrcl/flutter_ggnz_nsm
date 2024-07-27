@@ -18,7 +18,7 @@ Future<Map> GGNZMintingHandler(data) async {
   try {
     // health 수치 추가 필요
     print("minting docID: " + docID);
-    await db.collection(getx.mode == "abis"? "nft": "nft_test").doc(docID).set({
+    await db.collection(getx.mode == "userId"? "nft_v2": "nft_test").doc(docID).set({
       "address": getx.walletAddress.value,
       "time": startat,
       "parts": controller.marimoPartsNumMap,
@@ -27,11 +27,11 @@ Future<Map> GGNZMintingHandler(data) async {
       "environment": getx.environmentLevel.value,
     });
 
-    firestoreStream = await db.collection(getx.mode == "abis"? "nft": "nft_test").doc(docID).snapshots().listen((event) async {
+    firestoreStream = await db.collection(getx.mode == "userId"? "nft_v2": "nft_test").doc(docID).snapshots().listen((event) async {
       if (event.data()!["image"] != null) {
         try {
           if (type == 1) {
-            await getx.client.sendTransaction(
+            /*await getx.client.sendTransaction(
                 getx.credentials,
                 Transaction.callContract(
                     contract: getx.ggnzContract,
@@ -54,7 +54,7 @@ Future<Map> GGNZMintingHandler(data) async {
                   parameters: [BigInt.from(startat), docID, getMagicWord(getx.mode)],
                 ),
                 chainId: getx.chainID
-            );
+            );*/
           } else if (type == 2) {
             while (true) {
               try {

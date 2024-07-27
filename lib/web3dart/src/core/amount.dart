@@ -1,34 +1,38 @@
+// 이더리움의 다양한 단위를 정의
 enum EtherUnit {
-  ///Wei, the smallest and atomic amount of Ether
+  ///Wei, the smallest and atomic amount of Ether = 가장 작은 단위, 1 ether = 10^18 wei
   wei,
 
-  ///kwei, 1000 wei
+  ///kwei, 1000 wei = 1,000 wei
   kwei,
 
-  ///Mwei, one million wei
+  ///Mwei, one million wei = 1,000,000 wei
   mwei,
 
-  ///Gwei, one billion wei. Typically a reasonable unit to measure gas prices.
+  ///Gwei, one billion wei. Typically a reasonable unit to measure gas prices. = 1,000,000,000 wei, 가스 가격 측정에 주로 사용됨
   gwei,
 
-  ///szabo, 10^12 wei or 1 μEther
+  ///szabo, 10^12 wei or 1 μEther = 1,000,000,000,000 wei
   szabo,
 
-  ///finney, 10^15 wei or 1 mEther
+  ///finney, 10^15 wei or 1 mEther = 1,000,000,000,000,000 wei
   finney,
 
+  /// 기본 단위, 1 ether = 10^18 wei
   ether
 }
 
 /// Utility class to easily convert amounts of Ether into different units of
 /// quantities.
+// 이더리움의 양을 다양한 단위로 변환하는 유틸리티 클래스
 class EtherAmount {
-  const EtherAmount.inWei(this._value);
+  const EtherAmount.inWei(this._value); /* 주어진 wei 값을 사용하여 객체를 생성 */
 
-  EtherAmount.zero() : this.inWei(BigInt.zero);
+  EtherAmount.zero() : this.inWei(BigInt.zero); /* 값이 0인 객체를 생성 */
 
   /// Constructs an amount of Ether by a unit and its amount. [amount] can
   /// either be a base10 string, an int, or a BigInt.
+  // 주어진 단위와 값으로 객체를 생성합니다. amount는 BigInt, int, String 타입 중 하나일 수 있습니다.
   factory EtherAmount.fromUnitAndValue(EtherUnit unit, dynamic amount) {
     BigInt parsedAmount;
 

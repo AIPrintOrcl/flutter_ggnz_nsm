@@ -27,17 +27,17 @@ class MainPageLoading extends StatelessWidget {
                   ),
                 )
               ),
-              /*LinearPercentIndicator( *//* 로딩 중 진행바 : 전체적으로 사용자가 리소스를 다운로드하는 동안 진행 상황을 쉽게 파악  *//*
+              LinearPercentIndicator(  /* 로딩 중 진행바 : 전체적으로 사용자가 리소스를 다운로드하는 동안 진행 상황을 쉽게 파악 */
                 alignment: MainAxisAlignment.center,
                 width: MediaQuery.of(context).size.width * 0.9 ,
                 animation: true,
                 animationDuration: 1200,
                 lineHeight: 30.0,
-                percent: mainLoadingController.current_image.value / mainLoadingController.total_image.value, *//* 진행률은 mainLoadingController의 current_image 값과 total_image 값을 사용하여 계산 *//*
-                center: Text('downloading resources (${mainLoadingController.current_image.value}/${mainLoadingController.total_image.value})'), *//* 진행 바의 중앙에 표시할 텍스트를 설정합니다. 현재 다운로드된 리소스 수와 총 리소스 수를 나타내는 텍스트를 표시합니다. *//*
+                percent: mainLoadingController.current_image.value / mainLoadingController.total_image.value,  /*진행률은 mainLoadingController의 current_image 값과 total_image 값을 사용하여 계산*/
+                center: Text('downloading resources (${mainLoadingController.current_image.value}/${mainLoadingController.total_image.value})'),  /*진행 바의 중앙에 표시할 텍스트를 설정합니다. 현재 다운로드된 리소스 수와 총 리소스 수를 나타내는 텍스트를 표시합니다.*/
                 barRadius: Radius.circular(16.0),
                 progressColor: Colors.lightGreen,
-              )*/
+              )
             ],
           )
         /*})*/

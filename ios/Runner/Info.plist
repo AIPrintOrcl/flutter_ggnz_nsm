@@ -22,18 +22,33 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.732914892685-nv1s9kemt7hlvafmh5vagpgmsk4pu7ef</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-9634990372495017~3493058570</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This permission is needed app background music.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>reminders</string>
 	<key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to deliver personalized ads to you.</string>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -55,7 +70,5 @@
 	<false/>
 	<key>kTCCServiceMediaLibrary</key>
 	<string>media</string>
-	<key>NSAppleMusicUsageDescription</key>
-    <string>This permission is needed app background music.</string>
 </dict>
 </plist>

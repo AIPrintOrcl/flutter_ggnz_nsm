@@ -10,12 +10,13 @@ import 'package:ggnz/services/service_functions.dart';
 import 'package:ggnz/presentation/pages/collecting/collecting_view_controller.dart';
 import 'package:ggnz/presentation/pages/collecting/mission_view_controller.dart';
 import 'package:ggnz/services/main_timer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // 전역으로 가지고 있어야 할 데이터
 class ReactiveCommonController extends GetxController {
   //baobab or main net
   // 사용 모드
-  final mode = "abis_test";
+  final mode = "userId";
 
   // web3dart 관련
   late final Web3Client client; /* Web3.0 클라이언트. Ethereum 블록체인과의 상호작용을 담당 */
@@ -33,11 +34,12 @@ class ReactiveCommonController extends GetxController {
   late DeployedContract miscContract;
   late DeployedContract otpContract;
 
-  int gogIndex = 1;
-  int gopIndex = 2;
-  int ocnzIndex = 3;
+  int gogIndex = 1; /* 보통알 인덱스 */
+  int gopIndex = 2; /* 특별한알 인덱스 */
+  int ocnzIndex = 3; /* 프리미엄알 인덱스 */
 
-  late final bool isWalletExist;  /* 생성된 지갑이 있는지 확인 */
+  late final bool isWalletExist;  /* 생성된 지갑이 있는지 여부 */
+  late final bool isUserIdExist;  /* 로그인한 유저 아이디 있는지 여부 */
 
   // get data from firestore
   final firestore.FirebaseFirestore db = firestore.FirebaseFirestore.instance;
@@ -58,11 +60,12 @@ class ReactiveCommonController extends GetxController {
   final ocnzInfo = {}.obs;
 
   // 시간 관련 데이터를 관리
-  final RxList woodBoxTime = [].obs;
-  final RxList continueTime = [].obs;
+  final RxList woodBoxTime = [].obs; /* 사용자가 나무 상자(woodbox)를 열 수 있는 시간을 관리 */
+  final RxList continueTime = [].obs; /* 사용자가 연속적으로 활동한 시간을 관리 */
 
   /// 지갑 주소
   RxString walletAddress = "".obs; /* 사용자 지갑 주소 */
+  RxString uid = "".obs; /* 사용자 아이디 */
   RxMap keystoreFile = {}.obs; /* keystore 파일을 관리 */
 
   /// 환경게이지
@@ -76,12 +79,13 @@ class ReactiveCommonController extends GetxController {
 
   // 아이템 사용, 보상 등을 관리
   final RxMap itemUsed = {}.obs;
-  final RxMap getReward = {}.obs;
+  final RxMap getReward = {}.obs; /* 보상 */
   final RxMap collectingReward = {}.obs;
   final collectingViewController = Get.find<CollectingViewController>();
   final missionViewController = Get.find<MissionViewController>();
 
   late final mainTimer timer; /* 데이터베이스와 연동하여 타이머를 관리하는 인스턴스 */
+  late final SharedPreferences sharedPrefs; /* 앱의 간단한 데이터를 로컬 스토리지에 저장하기 위해 사용되는 객체 */
 
   // 초기화 함수로, Web3.0 클라이언트를 설정하고 체인 ID를 가져오는 작업 수행
   @override
@@ -96,35 +100,35 @@ class ReactiveCommonController extends GetxController {
   // 초기 값 설정을 위한 함수. 계약 초기화, 사용자 잔고 가져오기, Firestore 데이터 가져오기 등의 작업을 수행. [시점] password_page_controller.dart의 setConfirmPassWord 메소드 실행 할때.
   Future<bool> getInitialValue() async {
     // 각 contract들을 해당 mode에 맞는 파일에서 가져와 초기화합니다.
-    dAppContract = await getContract('assets/${mode}/OlchaeneezDAppControllerABI.json');
-    baitContract = await getContract('assets/${mode}/OlchaeneezBaitABI.json');
-    ggnzContract = await getContract('assets/${mode}/GGNZ.json');
-    eggContract = await getContract('assets/${mode}/OlchaeneezEggABI.json');
-    miscContract = await getContract('assets/${mode}/OlchaeneezMiscABI.json');
-    otpContract = await getContract('assets/${mode}/OlchaeneezOfThePlanetABI.json');
+    dAppContract = await getContract('assets/abis_test/OlchaeneezDAppControllerABI.json');
+    baitContract = await getContract('assets/abis_test/OlchaeneezBaitABI.json');
+    ggnzContract = await getContract('assets/abis_test/GGNZ.json');
+    eggContract = await getContract('assets/abis_test/OlchaeneezEggABI.json');
+    miscContract = await getContract('assets/abis_test/OlchaeneezMiscABI.json');
+    otpContract = await getContract('assets/abis_test/OlchaeneezOfThePlanetABI.json');
+
+    // SharedPreferences get 인스턴스
+    try {
+      sharedPrefs = await SharedPreferences.getInstance();
+    } catch (e) {
+    }
 
     try {
       if (walletAddress.value != "") {
         // if (mode == "abis") {
         await getGogGop(); /* GOG(프리미엄 알), GOP(특별한 알) */
-        await checkErrorLength(db);
-        deviceID.value = await getDeviceInfo();
+        await checkErrorLength(db); /* 사용자의 오류 로그 길이를 확인하고, 길이가 제한을 초과하는 경우 일부 로그를 삭제 */
+        deviceID.value = await getDeviceInfo(); /* 디바이스 정보를 가져와 Android의 경우 디바이스 ID를, iOS의 경우 identifierForVendor를 반환합니다. */
         // }
 
-        await getWalletCoinBalance(["KLAY", "BAIT", "GGNZ"]);
+        await getWalletCoinBalance(["BAIT"]);
         await getEggs(List.generate(3, (index) => BigInt.from(index + 1)));
         await getItems(List.generate(20, (index) => BigInt.from(index + 1)));
 
         await getCollectionData();
         await getDailyMissionData();
 
-        final response = await client.call(
-            contract: dAppContract,
-            function: dAppContract.function("ggnzRate"),
-            params: []
-        );
-
-        baitPrice = 1 / response[0].toDouble();
+        baitPrice = 1;
 
         await getFirebaseInitialData();
         await checkCollecting();
@@ -141,17 +145,9 @@ class ReactiveCommonController extends GetxController {
     return false;
   }
 
-  // 아이템 및 알 관련 데이터를 가져오는 함수
+  // 아이템 데이터를 가져오는 함수
   Future<bool> getItems(List<BigInt> itemIDs) async {
-    List<EthereumAddress> userAddresses = List.generate(itemIDs.length,
-        (index) => EthereumAddress.fromHex(walletAddress.value));
-
-    final response = await client.call(
-        contract: miscContract,
-        function: miscContract.function("balanceOfBatch"),
-        params: [userAddresses, itemIDs]);
-
-    print("get items count: $response");
+    final docData = (await db.collection(getUserCollectionName(mode)).doc(getx.walletAddress.value).get()).data();
 
     for (int idx = 0; idx < itemIDs.length; idx++) {
       final id = itemIDs[idx].toInt();
@@ -164,45 +160,34 @@ class ReactiveCommonController extends GetxController {
         item = ItemNames.getById(id);
       }
 
-      items.value[item.key]?["amount"] = response[0][idx].toInt();
+      items.value[item.key]?["amount"] = docData?['items']?[id.toString()]?.toInt() ?? 0;
     }
     return true;
   }
 
-  Future<List> getEggs(List<BigInt> EggIDs) async {
-    List<EthereumAddress> userAddresses = List.generate(
-        EggIDs.length, (index) => EthereumAddress.fromHex(walletAddress.value));
-
-    final response = await client.call(
-        contract: eggContract,
-        function: eggContract.function("balanceOfBatch"),
-        params: [userAddresses, EggIDs]);
-
-    print("get eggs count: $response");
+  // 알 관련 데이터를 가져오는 함수
+  Future<bool> getEggs(List<BigInt> EggIDs) async {
+    final docData = (await db.collection(getUserCollectionName(mode)).doc(getx.walletAddress.value).get()).data();
 
     for (int idx = 0; idx < EggIDs.length; idx++) {
       final egg_type = EggType.getById(EggIDs[idx].toInt());
-      items.value[egg_type.key]?["amount"] = response[0][idx].toInt();
+      items.value[egg_type.key]?["amount"] = docData?['eggs']?[EggIDs[idx].toString()]?.toInt() ?? 0;
     }
 
-    return response[0];
+    return true;
   }
 
   // GOG(프리미엄 알), GOP(특별한 알) 등의 데이터 가져오는 함수
   Future<bool> getGogGop() async {
-    final balance = await client.call(
-        sender: EthereumAddress.fromHex(getx.walletAddress.value),
-        contract: getx.dAppContract,
-        function: getx.dAppContract.function("isHolder"),
-        params: []);
+    final docData = (await db.collection(getUserCollectionName(mode)).doc(getx.walletAddress.value).get()).data();
 
-    getx.gog.value = balance[0].toDouble();
-    getx.gop.value = balance[1].toDouble();
-    getx.ocnz.value = balance[2].toDouble();
+    getx.gog.value = docData?['gog']?.toDouble() ?? 0.0;
+    getx.gop.value = docData?['gop']?.toDouble() ?? 0.0;
+    getx.ocnz.value = docData?['ocnz']?.toDouble() ?? 0.0;
 
-    print("test gog, gop, ocnz: $balance");
+    print("test gog, gop, ocnz: ${getx.gog.value} ${getx.gop.value}");
 
-    if (getx.gog.value > 0) {
+    /*if (getx.gog.value > 0) {
       getGogImageURL();
     }
 
@@ -212,26 +197,25 @@ class ReactiveCommonController extends GetxController {
 
     if (getx.ocnz.value > 0) {
       getOcnzImageURL();
-    }
+    }*/
 
     return true;
   }
 
-  // 지갑 잔고를 가져오는 함수
+  // KLAY, BAIT, GGNZ 지갑 잔고를 가져오는 함수
   Future<bool> getWalletCoinBalance(List<String> l) async {
-    final userAddress = EthereumAddress.fromHex(getx.walletAddress.value);
-
-    if (l.contains("KLAY")) {
-      final klaybalance = await getx.client.getBalance(userAddress);
-      getx.klay.value = klaybalance.getValueInUnit(EtherUnit.ether);
-    }
+    final docData = (await db.collection(getUserCollectionName(mode)).doc(getx.walletAddress.value).get()).data();
 
     if (l.contains("BAIT")) {
+      getx.bait.value = docData?['bait']?.toDouble() ?? 0.0;
+    }
+
+    /*if (l.contains("BAIT")) {
       getx.bait.value = (await getx.client.call(
               sender: userAddress,
               contract: getx.baitContract,
-              function: getx.baitContract.function("balanceOf"),
-              params: [userAddress, BigInt.one]))[0]
+              function: getx.baitContract.function("balanceOf"), *//* baitContract의 balanceOf 함수를 호출 *//*
+              params: [userAddress, BigInt.one]))[0] *//* balanceOf 함수는 주어진 사용자 주소와 BigInt.one을 인자로 받아 잔액을 반환 *//*
           .toDouble();
     }
 
@@ -239,16 +223,16 @@ class ReactiveCommonController extends GetxController {
       getx.ggnz.value = (await getx.client.call(
                   sender: userAddress,
                   contract: getx.ggnzContract,
-                  function: getx.ggnzContract.function("balanceOf"),
-                  params: [userAddress]))[0]
+                  function: getx.ggnzContract.function("balanceOf"), *//* ggnzContract의 balanceOf 함수를 호출 *//*
+                  params: [userAddress]))[0] *//* balanceOf 함수는 주어진 사용자 주소를 인자로 받아 잔액을 반환 *//*
               .toDouble() /
-          pow(10, 18);
-    }
+          pow(10, 18); *//* 조회된 잔액을 toDouble()로 변환하고, 10^18로 나누어(=18자리 소수점) getx.ggnz.value에 저장 *//*
+    }*/
 
     return true;
   }
 
-  // Firestore에서 초기 데이터를 가져오는 함수로, 환경 게이지 및 기타 데이터를 설정. [시점] password_page_controller.dart의 await getx.getInitialValue(); 실행 할 때.
+  // Firestore에서 초기 데이터를 가져오는 함수로, 환경 게이지, 나무상자 시간, 연속 접속 시간, 아이템 사용, 보상을 설정.  [시점] Future<bool> getInitialValue() 호출 시
   Future<void> getFirebaseInitialData() async {
     await db.collection(getUserCollectionName(mode))
         .doc(walletAddress.value)
@@ -288,7 +272,7 @@ class ReactiveCommonController extends GetxController {
     });
   }
 
-  // Firestore에서 수집 데이터를 가져오는 함수
+  // Firestore에서 수집 데이터를 가져와 collectingViewController.collectings에 리스트에 입력
   Future<void> getCollectionData() async {
     await db.collection("collection").orderBy("id").get().then((querySnapshot) {
       collectingViewController.collectings.value = [];
@@ -297,7 +281,7 @@ class ReactiveCommonController extends GetxController {
         final data = docSnapshot.data();
         final require = collectingViewController.getRequire(data["mission"]);
 
-        collectingViewController.collectings.value.add({
+        collectingViewController.collectings.value.add({ /* 새로운 수집 항목을 추가합니다. */
           "title": data["name"],
           "content": data["content"],
           "require": require,
@@ -308,7 +292,7 @@ class ReactiveCommonController extends GetxController {
         });
       }
 
-      collectingViewController.collectings.value.add(
+      collectingViewController.collectings.value.add( /* 특정 조건 만족하지 못해 추간된 빈 항목 */
           {'title': '', 'content': '', "require": 1, "current": 1, "rewards": []}
       );
     });
@@ -338,7 +322,7 @@ class ReactiveCommonController extends GetxController {
     collectingViewController.showSelectedOptions();
   }
 
-  // // Firestore에서 일일 미션 데이터를 가져오는 함수
+  // Firestore에서 일일 미션 데이터를 가져오는 함수
   Future<void> getDailyMissionData() async {
     await db.collection("mission").orderBy("id").get().then((querySnapshot) {
       missionViewController.missions = [];
@@ -478,7 +462,7 @@ class ReactiveCommonController extends GetxController {
     }
   }
 
-  /// 지갑 내 아이템
+  // 알과 아이템의 각 세부 정보를 RxMao애 저장하고 초기화
   RxMap<String, Map<String, dynamic>> items = RxMap({
     ItemNames.pillS.key: {
       "imageUrl": ItemNames.pillS.imageUrl,
@@ -718,7 +702,7 @@ class ReactiveCommonController extends GetxController {
   late Web3PrivateKey credentials;
   RxDouble volume = 100.0.obs;
   RxInt environmentTime = 0.obs;
-  RxBool isBackground = false.obs;
+  RxBool isBackground = false.obs; // 앱의 백그라운드 상태
 }
 
 final getx = Get.put(ReactiveCommonController());

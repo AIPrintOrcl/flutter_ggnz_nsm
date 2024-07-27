@@ -27,7 +27,7 @@ class DispatchDialog extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Image.asset(
-                    'assets/notice_paper.png',
+                    'assets/notice_paper.png', /* 문서 배경 이미지 */
                     fit: BoxFit.cover,
                   ),
                   Column(
@@ -42,7 +42,7 @@ class DispatchDialog extends StatelessWidget {
                           AnimatedSwitcher(
                             duration: Duration(seconds: 1),
                             switchInCurve: Curves.linear,
-                            child: controller.isDispatch
+                            child: controller.isDispatch /* 파견 보내기 버튼 활성화 될 경우 */
                                 ? Container(
                               key: Key('start'),
                               width: Get.width / 3.5,
@@ -98,14 +98,14 @@ class DispatchDialog extends StatelessWidget {
                                   (getx.healthLevel.value.toInt() ~/ 10) /* 건강도 레벨 값/10 */
                                 });
                           })),
-                      Padding(
+                      /*Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: Divider(
                           height: Get.height / 12,
                           thickness: 2,
                         ),
                       ),
-                      controller.isAbleMint ? MintInfo() : DisableMintInfo(),
+                      controller.isAbleMint ? MintInfo() : DisableMintInfo(),*/ /* 입양 가능 여부 판단 ?  */
                     ],
                   ),
                 ]),
@@ -238,7 +238,7 @@ class DispatchInfo extends StatelessWidget {
             ),
             Watch(
               isDialog: true,
-            ),
+            ), /* isDialog = true => buildTimeDialog() */
             const SizedBox(
               height: 5,
             ),
@@ -249,6 +249,7 @@ class DispatchInfo extends StatelessWidget {
   }
 }
 
+// 입양 가능할 때
 class MintInfo extends StatelessWidget {
   MintInfo({Key? key}) : super(key: key);
 
@@ -268,14 +269,14 @@ class MintInfo extends StatelessWidget {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
                   child:
-                      Image.asset('assets/mint.png', width: Get.width / 3.5)),
+                      Image.asset('assets/mint.png', width: Get.width / 3.5)), /* 인사를 나누며 보내는 이미지 */
             ),
             const SizedBox(width: 10),
             Stack(
               alignment: Alignment.center,
               children: [
                 Image.asset(
-                  'assets/mint_bubble.png',
+                  'assets/mint_bubble.png', /* 빈 말풍선 이미지 */
                   width: Get.width / 3.1,
                 ),
                 Column(
@@ -292,7 +293,7 @@ class MintInfo extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         child: Text(
-                          'give_up_dispatch'.tr,
+                          'give_up_dispatch'.tr, /* 'give_up_dispatch': '방생을 포기하고 나의 올채니를 입양하여 NFT로 남깁니다.' */
                         ),
                       ),
                     ),
@@ -310,7 +311,7 @@ class MintInfo extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         child: Text(
-                          'need_some_tokens'.tr,
+                          'need_some_tokens'.tr, /* 'need_some_tokens': '약간의 토큰이 필요합니다.' */
                         ),
                       ),
                     ),
@@ -329,7 +330,7 @@ class MintInfo extends StatelessWidget {
         ),
         ButtonGGnz(
             width: 179,
-            buttonText: 'adopt'.tr,
+            buttonText: 'adopt'.tr, /* 'adopt': '입양하기' */
             buttonBorderColor: HexColor("#555D42"),
             buttonColor: HexColor("#DAEAD4"),
             style: TextStyle(
@@ -343,7 +344,7 @@ class MintInfo extends StatelessWidget {
               Get.dialog(
                 AlertDialog(
                   title: Text(
-                    '1000 GGNZ or ${'OCNZ Mint'.tr}',
+                    '1000 GGNZ or ${'OCNZ Mint'.tr}', /* 'OCNZ Mint': '민팅권' */
                     style: TextStyle(
                       fontFamily: 'ONE_Mobile_POP_OTF',
                       color: HexColor("#555D42"),
@@ -361,7 +362,7 @@ class MintInfo extends StatelessWidget {
                     ),
                   ),
                   actions: [
-                    ButtonGGnz(
+                    ButtonGGnz( /* 1000 GGNZ 선택하여 입양할 경우 */
                         width: 179,
                         buttonText: "1000 GGNZ",
                         buttonBorderColor: HexColor("#555D42"),
@@ -378,7 +379,7 @@ class MintInfo extends StatelessWidget {
                           Get.back();
                           final result = await Get.to(
                               () => SignWalletPage(
-                                    signReason: 'OCNZ Mint Description'.tr,
+                                    signReason: 'OCNZ Mint Description'.tr, /* 'OCNZ Mint Description': '성장을 끝낸  올채니를 입양합니다.' */
                                   ),
                               arguments: {
                                 "reason": 'MINT',
@@ -392,7 +393,7 @@ class MintInfo extends StatelessWidget {
                     ),
                     ButtonGGnz(
                         width: 179,
-                        buttonText: '${'OCNZ Mint'.tr}',
+                        buttonText: '${'OCNZ Mint'.tr}', /* 'OCNZ Mint': '민팅권' */
                         buttonBorderColor: HexColor("#555D42"),
                         buttonColor: HexColor("#DAEAD4"),
                         style: TextStyle(
@@ -401,14 +402,13 @@ class MintInfo extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
-                        onPressed: () async {
+                        onPressed: () async { /* 민팅권 사용해서 입양할 때 */
                           if (getx.items["OCNZ Mint"]!["amount"] > 0) {
-                            // 민팅권 사용해서 입양할 때
                             Get.back();
                             Get.back();
                             final result = await Get.to(
                                 () => SignWalletPage(
-                                      signReason: 'OCNZ Mint Description'.tr,
+                                      signReason: 'OCNZ Mint Description'.tr, /* 'OCNZ Mint Description': '성장을 끝낸  올채니를 입양합니다.' */
                                     ),
                                 arguments: {
                                   "reason": 'MINT',

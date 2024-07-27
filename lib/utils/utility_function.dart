@@ -80,8 +80,7 @@ Future<void> updateUserCollectionDB(FirebaseFirestore db, String collection_name
 }
 
 /*
-* 기능: 디바이스 정보를 가져와 Android의 경우 디바이스 ID를,
-*  iOS의 경우 identifierForVendor를 반환합니다.
+* 기능: 디바이스 정보를 가져와 Android의 경우 디바이스 ID를, iOS의 경우 identifierForVendor를 반환합니다.
 * 파라미터: 없음
 * */
 Future<String> getDeviceInfo() async {
@@ -147,7 +146,7 @@ String getSHA256(String s) {
 }
 
 /*
-* 기능: 사용자의 오류 로그 길이를 확인하고, 길이가 제한을 초과하는 경우 일부 로그를 삭제합니다.
+* 기능: 사용자의 오류 로그 길이를 확인하고, 길이가 제한을 초과하는 경우 일부 로그를 삭제.
 * 파라미터:
 *   db: Firestore 데이터베이스 인스턴스
 * */

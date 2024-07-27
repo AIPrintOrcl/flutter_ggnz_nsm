@@ -221,7 +221,7 @@ class SepticTank extends StatelessWidget {
                   ],
                 )),
           ),
-          Positioned(top: 90, child: Watch(isDialog: false)) /// Positioned : Stack 위젯의 자식으로만 사용 가능. 자식 위젯을 Stack의 상단, 하단, 왼쪽, 오른쪽 및 중간에 배치.
+          Positioned(top: 90, child: Watch(isDialog: false)) /* isDialog = false => buildTime()를 호출 */ /// Positioned : Stack 위젯의 자식으로만 사용 가능. 자식 위젯을 Stack의 상단, 하단, 왼쪽, 오른쪽 및 중간에 배치.
         ],
       ),
     );
@@ -255,18 +255,18 @@ class IncubatorMenus extends StatelessWidget {
                           imageUrl: "assets/coin/bait.png", /* 미끼 코인 이미지 */
                           isInt: true),
                       const SizedBox(height: 5),
-                      ButtonCoins(
-                        coinAmount: getx.ggnz.value,
-                        imageUrl: "assets/coin/ggnz.png", /* ggnz 코인 이미지*/
-                        isInt: false,
-                      ),
-                      const SizedBox(height: 5),
                       /*ButtonCoins(
+                        coinAmount: getx.ggnz.value,
+                        imageUrl: "assets/coin/ggnz.png", *//* ggnz 코인 이미지*//*
+                        isInt: false,
+                      ),*/
+                      const SizedBox(height: 5),
+                      ButtonCoins(
                         coinAmount: getx.klay.value,
                         imageUrl: "assets/coin/klay.png",
                         isInt: false,
                       ),
-                      const SizedBox(height: 5),*/
+                      const SizedBox(height: 5),
                     ],
                   ),
                   Column( /* 우측상단 메뉴(상점, 인벤토리 지갑, 도감 & 콜렉션, 소리) */

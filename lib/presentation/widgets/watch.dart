@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:ggnz/utils/getx_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+//
+// incubator_page.dart => Watch(isDialog: false) : 게임 메인 화면의 상단 중간에 있는 시계
+// dispatch_dialog.dart => Watch(isDialog: true,)
 class Watch extends StatelessWidget {
   final isDialog;
   const Watch({Key? key, required this.isDialog}) : super(key: key);

@@ -275,6 +275,7 @@ class Wallet {
     return file;
   }
 
+  // 생성된 지갑 파일 존재 여부 확인
   static Future<bool> isKeystoreExist() async {
     final file = await FilePath()._localFile;
     return file.exists();

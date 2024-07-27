@@ -95,7 +95,7 @@ class IncubatorPageController extends GetxController
   Map<String, String> get marimoPartsNumMap => _marimoPartsNumMap.value;
   StreamSubscription? checkMintingStream; /// StreamSubscription : 스트림으로부터 발생하는 이벤트를 처리하는 데 사용. 스트림을 구독하고 관리
 
-  // 민팅 가능 여부 판단
+  // 입양 가능 여부 판단
   final _isAbleMint = false.obs;
   bool get isAbleMint => _isAbleMint.value;
   void setIsAbleMint(bool b) {
@@ -546,21 +546,23 @@ class IncubatorPageController extends GetxController
 
   //민팅 함수
   // type 1: mint with ggnz, 2: mint with minting ticket
-  void minting(type) async {
+  // [dispatch_dialog.dart] 방생하기 버튼 -> 입양하기 버튼 -> GGNZ와 밍틴권 중 소비 =>
+  void minting(type) async { /* type 1 : 1000 GGNZ, type 2 : 밍틴권 */
     openLoadingDialog();
 
-    final String docID = getSHA256(marimoList.toString());
-    bool mintingStart = true;
+    final String docID = getSHA256(marimoList.toString()); /* 마리모 이미지 리스트의 SHA-256 해시를 생성하여 문서 ID로 사용 */
+    bool mintingStart = true; /* 민팅 실행 여부 */
 
     // double check for minting
+    // 민팅 중복 확인
     await db
-        .collection(getx.mode == "abis" ? "nft" : "nft_test")
+        .collection(getx.mode == "userId" ? "nft_v2" : "nft_test")
         .doc(docID)
         .get()
         .then((doc) {
-      if (doc.exists) {
-        reset();
-        showSnackBar('minting_failed'.tr);
+      if (doc.exists) { /* 문서가 존재하면 중복 민팅 */
+        reset(); /* 상태 초기화 */
+        showSnackBar('minting_failed'.tr); /* 'minting_failed': '동일한 NFT가 존재하여 민팅에 실패했습니다.' */
         closeLoadingDialog();
         mintingStart = false;
       }
@@ -570,15 +572,14 @@ class IncubatorPageController extends GetxController
       return;
     }
 
+    // 민팅 작업 수행
     final minting_result = await GGNZMintingHandler({
       'db': db,
       'docID': docID,
       "type": type,
     });
 
-    print("test result: $minting_result");
-
-    await getx.getGogGop();
+    await getx.getGogGop(); /* GOG(프리미엄 알), GOP(특별한 알) 등의 데이터 가져오는 함수 */
     if (minting_result["result"] == "error") {
       showSnackBar(await getErrorMessage(
           minting_result["error_message"], minting_result["type"]));
@@ -608,13 +609,11 @@ class IncubatorPageController extends GetxController
       "mint_id": getSHA256(marimoList.toString()),
     });
 
-    print("test dispatch result: ${dispatch_result}");
-
     if (dispatch_result["result"] == "success") {
       closeLoadingDialog();
       reset();
       showSnackBar('dispatch_complete'.tr);
-      await getx.getWalletCoinBalance(["BAIT", "KLAY"]);
+      await getx.getWalletCoinBalance(["BAIT"]);
     } else {
       showSnackBar(await getErrorMessage(
           dispatch_result["error_message"], dispatch_result["type"]));
@@ -657,7 +656,6 @@ class IncubatorPageController extends GetxController
       closeLoadingDialog();
       if (reqResult["result"] == "success") {
         showSnackBar('egg_purchase_complete'.tr);
-        await getx.getWalletCoinBalance(["KLAY"]);
       } else {
         if (reqResult["result"] == "error" &&
             reqResult["error_message"] != null) {
@@ -701,7 +699,6 @@ class IncubatorPageController extends GetxController
     if (reqResult["result"] == "success") {
       showSnackBar('random_box_purchase_completed'.tr);
       await getx.getItems([BigInt.from(1), BigInt.from(reqResult["tokenID"])]);
-      await getx.getWalletCoinBalance(["KLAY"]);
 
       Get.dialog(
         OpenBoxDialog(
@@ -736,8 +733,14 @@ class IncubatorPageController extends GetxController
     closeLoadingDialog();
     if (reqResult["result"] == "success") {
       for (var id in ids) {
-        final item = ItemNames.getById(id);
-        Get.dialog(
+        late final item;
+        if (id < 3) {
+          // case of ItemBoxType
+          item = ItemBoxType.getById(id);
+        } else {
+          // case of ItemNames
+          item = ItemNames.getById(id);
+        }        Get.dialog(
             MissionItemDialog(imageUrl: item.imageUrl, itemName: item.name));
       }
       await getx.getItems(reqResult["ids"]);
@@ -870,7 +873,7 @@ class IncubatorPageController extends GetxController
   @override
   void onInit() async {
     final test_mode_ratio = 1;
-    partsGageList = getx.mode == "abis"
+    partsGageList = getx.mode == "userId"
         ? [60.0 * 60, 120.0 * 60, 180.0 * 60, 240.0 * 60, 300.0 * 60]
         : [60.0  * test_mode_ratio, 120.0  * test_mode_ratio, 180.0  * test_mode_ratio,
       240.0 * test_mode_ratio, 300.0 * test_mode_ratio];

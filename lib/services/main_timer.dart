@@ -85,56 +85,62 @@ class mainTimer {
     return true;
   }
 
+  // 현재 시간을 기준으로 사용자가 나무 상자를 열 수 있는지 확인.
   int checkWoodBox(String currentTime) {
     for (int i = 0; i < getx.woodBoxTime.value.length; i++) {
-      if (getx.woodBoxTime.value[i] == currentTime) {
-        getx.woodBoxTime.value = getx.woodBoxTime.value.sublist(i);
-        db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({
+      if (getx.woodBoxTime.value[i] == currentTime) { /* 나무 상자를 열수 있는 시간 == 현재 시간 일 경우*/
+        getx.woodBoxTime.value = getx.woodBoxTime.value.sublist(i); /* 해당 항목 이후의 모든 항목을 유지하는 하위 리스트로 업데이트 */
+        db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({ /* 사용자가 나무 상자를 열은 시간을 기록 */
           "woodBoxTime": getx.woodBoxTime.value
         });
 
-        return (5 - getx.woodBoxTime.value.length);
+        return (5 - getx.woodBoxTime.value.length); /* 남은 보상 횟수 반환 */
       }
     }
 
-    getx.woodBoxTime.value = [];
+    // 만약 현재 시간과 나무 상자를 열 수 있는 시간이 일치한 경우가 없을 경우
+    getx.woodBoxTime.value = []; /* 빈 리스트로 초기화 */
     db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({
       "woodBoxTime": getx.woodBoxTime.value
     });
 
-    return 5;
+    return 5; /* 보상 횟수를 5로 반환 */
   }
 
+  // 현재 시간을 나무 상자 시간 리스트에 추가 및 보상 상태를 업데이트하도록 플래그를 설정.
   Future<void> updateWoodBox() async {
     DateTime currentTime = await NTP.now();
-    getx.woodBoxTime.value.add(getTimeStamp(currentTime));
-    needToUpdateWoodbox = true;
+    getx.woodBoxTime.value.add(getTimeStamp(currentTime)); /* 현재 시간을 나무 상자 시간 리스트에 추가 */
+    needToUpdateWoodbox = true; /* 보상 상태를 업데이트하도록 플래그를 설정 */
   }
 
+  // 현재 시간을 기준으로 사용자가 연속적으로 활동한 횟수를 확인
   int checkContinueCount(String currentTime) {
     for (int i = 0; i < getx.continueTime.value.length; i++) {
       if (getx.continueTime.value[i] == currentTime) {
         getx.continueTime.value = getx.continueTime.value.sublist(i);
-        db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({
+        db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({ /* 사용자가 연속적으로 활동한 시간을 기록 */
           "continueTime": getx.continueTime.value
         });
 
-        return (3 - getx.continueTime.value.length);
+        return (3 - getx.continueTime.value.length); /* 남은 연속 활동 횟수를 반환 */
       }
     }
 
-    getx.continueTime.value = [];
+    // 만약 현재 시간과 사용자가 연속적으로 활동한 시간이 일치한 경우가 없을 경우
+    getx.continueTime.value = []; /* 빈 리스트로 초기화 */
     db.collection(getUserCollectionName(getx.mode)).doc(getx.walletAddress.value).update({
       "continueTime": getx.continueTime.value
     });
 
-    return 3;
+    return 3; /* 남은 연속 활동 시간을 3으로 반환 */
   }
 
+  // 현재 시간을 연속 활동 시간 리스트에 추가하고 연속 활동 상태를 업데이트하도록 플래그를 설정
   Future<void> updateContinue() async {
     DateTime currentTime = await NTP.now();
-    getx.continueTime.value.add(getTimeStamp(currentTime));
-    needToUpdateContinue = true;
+    getx.continueTime.value.add(getTimeStamp(currentTime)); /* 현재 시간을 연속 활동 시간 리스트에 추가 */
+    needToUpdateContinue = true; /* 연속 활동 상태를 업데이트하도록 플래그를 설정 */
   }
 
   Future<void> checkMission(String currentTime) async {

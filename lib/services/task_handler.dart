@@ -73,98 +73,57 @@ class GGNZIncubateHandler {
 
   // 사용자가 결제 지불해야 하는지 여부에 따라 marimo의 incubator을 초기화 기능 수행
   Future<Map> initIncubator(bool needToPay) async {
-    while (true) {
-      try {
-        if (needToPay) { /* 결제 필요한 경우 트랜잭션 전송 및 데이터베이스 업데이트 */
-          await getx.client.sendTransaction( /* 첫번째 트랜잭션 (KIP-37 토큰 전송) */
-              getx.credentials,
-              Transaction.callContract( /// callContract : 계약 함수를 호출하는 데 사용할 수 있는 트랜잭션을 구성합니다.
-                  contract: getx.dAppContract, /* DeployedContract dAppContract - 이더리움 블록체인에 배포된 스마트 계약과 상호 작용하기 위한 헬퍼 클래스 */
-                  function: getx.dAppContract.function("sendKIP37ForUser"), /* KIP-37 토큰 */
-                  parameters: [
-                    BigInt.one,
-                    BigInt.from(page_num + 1),
-                    BigInt.one,
-                    getMagicWord(getx.mode)
-                  ]),
-              chainId: getx.chainID);
+    try {
+      if (needToPay) {
+        final egg_amount = (await db.collection(getUserCollectionName(getx.mode))
+            .doc(getx.walletAddress.value).get()).data()?['eggs']?['${page_num + 1}'] ?? 0;
 
-          await updateUserDB(db, { /* 사용자 데이터베이스 업데이트 */
-            "marimo.eggID": page_num + 1,
-            "marimo.id": id,
-            "marimo.time": current_time + 1,
-            "marimo.marimoList": marimoList,
-            "marimo.marimoPartsNumMap": marimoPartsNumMap,
-            "marimo.time_interval": time_interval,
-            "marimo.marimoPartCheck": marimoPartCheck,
-            "marimo.environmentTime": getx.environmentTime.value,
-          }, false);
+        if (egg_amount < 1) {
+          throw Error();
+        }
 
-          if (used_item != -1) { /* 두번째 트랜잭션 (아이템 사용 시) */
-            await getx.client.sendTransaction(
-                getx.credentials,
-                Transaction.callContract(
-                    contract: getx.dAppContract,
-                    function: getx.dAppContract.function("sendKIP37ForUser"),
-                    parameters: [
-                      BigInt.from(3),
-                      BigInt.from(used_item),
-                      BigInt.one,
-                      getMagicWord(getx.mode)
-                    ]),
-                chainId: getx.chainID);
+        var updateData = {
+          "eggs.${page_num + 1}": firestore.FieldValue.increment(-1),
+          "marimo.eggID": page_num + 1,
+          "marimo.id": id,
+          "marimo.time": current_time + 1,
+          "marimo.marimoList": marimoList,
+          "marimo.marimoPartsNumMap": marimoPartsNumMap,
+          "marimo.time_interval": time_interval,
+          "marimo.marimoPartCheck": marimoPartCheck,
+          "marimo.environmentTime": getx.environmentTime.value,
+        };
 
-            getx.environmentLevel.value = getx.environmentLevel.value + initial_data["environment_initial"];
-            getx.healthLevel.value = initial_data["health_initial"];
+        if (used_item != -1) {
+          final item_amount = (await db.collection(getUserCollectionName(getx.mode))
+              .doc(getx.walletAddress.value).get()).data()?['items']?['${used_item}'] ?? 0;
 
-            await updateUserDB(db, { /* 사용자 데이터베이스 업데이트 */
-              "marimo.itemID": used_item,
-              "marimo.health": getx.healthLevel.value,
-              "environmentLevel": getx.environmentLevel.value,
-            }, false);
+          if (item_amount < 1) {
+            throw Error();
           }
-        } else { /* 결제 필요 없는 경우 건강 레벨 초기화 */
+          getx.environmentLevel.value = getx.environmentLevel.value + initial_data["environment_initial"];
           getx.healthLevel.value = initial_data["health_initial"];
+
+          updateData["items.${used_item}"] = firestore.FieldValue.increment(-1);
+          updateData["marimo.itemID"] = used_item;
+          updateData["marimo.health"] = getx.healthLevel.value;
+          updateData["environmentLevel"] = getx.environmentLevel.value;
         }
-
-        await waitForResult(3000); /* 결과 대기 */
-
-        return Future.value({ /* 알에서 깨기 성공 결과 반환 */
-          "type": "awake_egg",
-          "result": "success",
-          "used_item": used_item,
-        });
-      } catch (e) {
-        if (e.toString().contains("caller is not owner nor approved")) { /* 소유자가 아니거나 승인되지 않은 경우 */
-          try {
-            await getx.client.sendTransaction(
-                getx.credentials,
-                Transaction.callContract(
-                    contract: getx.eggContract,
-                    function: getx.eggContract.function("setApprovalForAll"),
-                    parameters: [getx.dAppContract.address, true]),
-                chainId: getx.chainID);
-
-            await db
-                .collection(getUserCollectionName(getx.mode))
-                .doc(getx.walletAddress.value)
-                .update({"setApprovalForEgg": true});
-            await waitForResult(3000);
-          } catch (e) {
-            return Future.value({ /* 알에서 깨기 실패 결과 반영 */
-              "type": "awake_egg",
-              "error_message": e.toString(),
-              "result": "error"
-            });
-          }
-        } else {
-          return Future.value({ /* 알에서 깨기 실패 결과 반영 */
-            "type": "awake_egg",
-            "error_message": e.toString(),
-            "result": "error"
-          });
-        }
+        await updateUserDB(db, updateData, false);
+      } else {
+        getx.healthLevel.value = initial_data["health_initial"];
       }
+      return Future.value({
+        "type": "awake_egg",
+        "result": "success",
+        "used_item": used_item,
+      });
+    } catch (e) {
+      return Future.value({
+        "type": "awake_egg",
+        "error_message": 'execution reverted: KIP37: insufficient balance for transfer',
+        "result": "error"
+      });
     }
   }
 

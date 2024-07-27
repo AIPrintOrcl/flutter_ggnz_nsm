@@ -53,7 +53,7 @@ class PasswordPage extends StatelessWidget {
                   SizedBox(
                     width: Get.width * 0.8,
                     child: Text(
-                      controller.isWalletExist? "password_text2".tr: /* 'password_text2': '비밀번호 6자리를 입력해 주세요' */
+                      controller.isUserIdExist? "password_text2".tr: /* 'password_text2': '비밀번호 6자리를 입력해 주세요' */
                       controller.isFirstPasswordDone /* 1차 비밀번호 검증 */
                           ? 'confirm_password_text1'.tr /* 통과. ''confirm_password_text1': '한 번 더 입력해 주세요.' */
                           : 'password_text1'.tr, /* 1차 비밀번호에서 잘못 입력할 경우. 'password_text1': '비밀번호 6자리를 설정해 주세요'. */

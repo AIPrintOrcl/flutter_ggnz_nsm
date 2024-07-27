@@ -12,7 +12,6 @@ Future<Map> GGNZDispatchHandler(data) async {
   final String id = data["id"];
   final String mint_id = data["mint_id"];
   late final String dispatch_id;
-  final double start_bait = getx.bait.value;
 
   try {
     final dispatch_test_result = await canDispatchDevice(db, id, mint_id);
@@ -37,31 +36,10 @@ Future<Map> GGNZDispatchHandler(data) async {
     }
 
     await updateUserDB(db, {
-      "marimo": firestore.FieldValue.delete()
+      "marimo": firestore.FieldValue.delete(),
+      "bait": firestore.FieldValue.increment(max(amount, 1))
     }, false);
 
-    await getx.client.sendTransaction(
-        getx.credentials,
-        Transaction.callContract(
-            contract: getx.dAppContract,
-            function: getx.dAppContract.function("mintKIP37ForUser"),
-            parameters: [
-              BigInt.from(2),
-              BigInt.one,
-              BigInt.from(max(amount, 1)),
-              getMagicWord(getx.mode)
-            ]
-        ),
-        chainId: getx.chainID
-    );
-
-    while (true) {
-      await waitForResult(1500);
-      await getx.getWalletCoinBalance(["BAIT"]);
-      if (start_bait < getx.bait.value) {
-        break;
-      }
-    }
     await getx.timer.updateMissionCount("Daily2");
     await updateUserCollectionDB(db, "dispatch", dispatch_id, {
       "finished": true
