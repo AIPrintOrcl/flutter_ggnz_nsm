@@ -6,8 +6,6 @@ import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:firebase_ui_oauth_apple/firebase_ui_oauth_apple.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ggnz/presentation/pages/login/login_controller.dart';
-import 'package:ggnz/presentation/pages/login/login_page.dart';
 import 'package:ggnz/presentation/widgets/buttons/button_ggnz.dart';
 import 'package:ggnz/presentation/pages/password/password_page.dart';
 import 'package:ggnz/utils/audio_controller.dart';

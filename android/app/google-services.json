@@ -58,11 +58,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "441031740963-364qfppoecvm9d4kgr401nv1j677jrgq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neeznggnz.tadpolediary",
+            "certificate_hash": "91ac2adb6776993a55791b96eebc5a059c47fa4a"
+          }
+        },
+        {
           "client_id": "441031740963-7s0brcnlmh08k4f1m1g4nga2v9rnpi1m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.neeznggnz.tadpolediary",
             "certificate_hash": "d701f60530f331b7bf708e6f50daf17a335463a9"
+          }
+        },
+        {
+          "client_id": "441031740963-tf4oq8iknnu2u38lfbamdsblfs0d0eic.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neeznggnz.tadpolediary",
+            "certificate_hash": "56b9ff58ecbe63cacfb076d578c2e9b0db44ee0c"
           }
         },
         {
