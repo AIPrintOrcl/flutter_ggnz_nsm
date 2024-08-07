@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ggnz/firebase_options.dart';
-import 'package:ggnz/presentation/pages/incubator/incubator_page_controller.dart';
 import 'package:ggnz/presentation/pages/login/login_controller.dart';
 import 'package:ggnz/presentation/pages/main_page_loading.dart';
 import 'package:ggnz/presentation/pages/market/market_page_controller.dart';
@@ -21,7 +20,6 @@ import 'presentation/pages/collecting/collecting_page_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: "ggnz-nsm",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 

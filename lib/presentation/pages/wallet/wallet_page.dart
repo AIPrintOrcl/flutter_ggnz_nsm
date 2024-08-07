@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' ;
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
@@ -39,7 +41,7 @@ class WalletPage extends StatelessWidget {
                 child: Icon(Icons.arrow_back_ios, color: Colors.black))),
       ),
       body: Obx(
-        () => Container(
+            () => Container(
           width: Get.width,
           height: Get.height,
           padding: const EdgeInsets.fromLTRB(20, 45, 20, 0),
@@ -50,16 +52,17 @@ class WalletPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // 현재 소지하고 있는 bait 정보
                   Image.asset("assets/coin/bait.png", width: 25),
                   const SizedBox(width: 8),
                   Text(
-                    getx.bait.value < 1000
+                    getx.bait.value < 1000 // bait가 천 단위 넘을 경우 format
                         ? getx.bait.value.toInt().toString()
                         : NumberFormat.compactCurrency(
-                            decimalDigits: 2,
-                            locale: 'en_EN',
-                            symbol: '',
-                          ).format(getx.bait.value.toInt()),
+                      decimalDigits: 2,
+                      locale: 'en_EN',
+                      symbol: '',
+                    ).format(getx.bait.value.toInt()),
                     style: TextStyle(
                         fontFamily: 'ONE_Mobile_POP_OTF',
                         fontSize: 40,
@@ -72,12 +75,12 @@ class WalletPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  Container( // 지갑 주소 확인 및 클립보드 복사
                       padding: const EdgeInsets.fromLTRB(21, 15, 21, 15),
                       decoration: BoxDecoration(
                           color: HexColor('#F4FBEE'),
                           border:
-                              Border.all(width: 2, color: HexColor('#6D7B76')),
+                          Border.all(width: 2, color: HexColor('#6D7B76')),
                           borderRadius: BorderRadius.circular(100)),
                       child: GestureDetector(
                         onTap: () {
@@ -98,7 +101,7 @@ class WalletPage extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: ButtonGGnz(
+                    child: ButtonGGnz( // 지갑 주소를 클립보드 복사
                       width: Get.width,
                       buttonText: 'COPY USER ID',
                       buttonBorderColor: HexColor("#555D42"),
@@ -157,7 +160,7 @@ class WalletPage extends StatelessWidget {
                   GoogleProvider(clientId: '441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com')
                 ],
               ),*/
-              ...getx.uid.value != '' ? [] : [
+              ...getx.uid.value != '' ? [] : [ // 유저 로그인 여부 확인 ? 소셜 login X : 소셜 login O
                 const SizedBox(height: 16),
                 ButtonGGnz(
                   width: Get.width,
@@ -178,14 +181,15 @@ class WalletPage extends StatelessWidget {
                         stream: FirebaseAuth.instance.authStateChanges(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
+                            // 플랫폼에 따른 clientId = Platform.isAndroid ? android : ios
+                            var clientId = Platform.isAndroid ? '441031740963-tf4oq8iknnu2u38lfbamdsblfs0d0eic.apps.googleusercontent.com' : '441031740963-huhdd8hiqf1c8lidj8cbc1hvgvrlllgo.apps.googleusercontent.com';
                             return SignInScreen(
                               providers: [
-                                GoogleProvider(clientId: '441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com'),
+                                GoogleProvider(clientId: clientId),
                                 AppleProvider()
                               ],
                             );
                           }
-
                           return noneWidget();
                         }
                     )
@@ -207,6 +211,7 @@ class WalletPage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
+                            // 현재 소지하고 있는 bait 정보 중복??
                             Image.asset("assets/coin/bait.png", width: 25),
                             const SizedBox(width: 8),
                             Text(
@@ -223,10 +228,10 @@ class WalletPage extends StatelessWidget {
                           getx.bait.value < 1000
                               ? getx.bait.value.toInt().toString()
                               : NumberFormat.compactCurrency(
-                                  decimalDigits: 2,
-                                  locale: 'en_EN',
-                                  symbol: '',
-                                ).format(getx.bait.value.toInt()),
+                            decimalDigits: 2,
+                            locale: 'en_EN',
+                            symbol: '',
+                          ).format(getx.bait.value.toInt()),
                           style: TextStyle(
                               fontFamily: 'ONE_Mobile_POP_OTF',
                               fontSize: 22,
@@ -235,7 +240,7 @@ class WalletPage extends StatelessWidget {
                         )
                       ],
                     ),
-                    // const SizedBox(height: 30),
+                    //const SizedBox(height: 30),
                     /*Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -310,12 +315,16 @@ class WalletPage extends StatelessWidget {
   }
 }
 
+// 소셜 로그인 후 나타나는 화면을 확인하고 사용자 정보를 로컬에 저장하고 데이터베이스를 업데이트
 class noneWidget extends StatelessWidget {
   const noneWidget({Key? key}) : super(key: key);
 
+  // 소셜 로그인한 사용자 정보를 로컬에 저장하고 데이터베이스를 업데이트
   Future<bool> setLogin() async {
+    // 로컬에  uid 저장
     getx.sharedPrefs.setString('uid', FirebaseAuth.instance.currentUser?.uid.toString() ?? '');
     getx.uid.value = FirebaseAuth.instance.currentUser?.uid.toString() ?? '';
+    // 데이터베이스 업데이트
     await updateUserDB(getx.db, {
       'uid': FirebaseAuth.instance.currentUser?.uid.toString(),
       'email': FirebaseAuth.instance.currentUser?.email.toString()
@@ -347,7 +356,7 @@ class noneWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'social_login'.tr,
+                      'social_login'.tr, // 'social_login': '소셜 로그인이 되었습니다.'
                       style: TextStyle(
                         fontFamily: 'ONE_Mobile_POP_OTF',
                         color: HexColor('#555D42'),
@@ -373,7 +382,7 @@ class noneWidget extends StatelessWidget {
                         ),
                         onPressed: () {
                           Get.back();
-                          Get.back();
+                          Get.back(); // 게임 메인 화면 ??
                         }),
                     const SizedBox(
                       height: 20,
@@ -383,6 +392,6 @@ class noneWidget extends StatelessWidget {
               ),
             ],
           )),
-    );;
+    );
   }
 }

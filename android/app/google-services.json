@@ -1,45 +1,89 @@
 {
   "project_info": {
-    "project_number": "732914892685",
-    "project_id": "ggnz-nsm",
-    "storage_bucket": "ggnz-nsm.appspot.com"
+    "project_number": "441031740963",
+    "project_id": "neezn-ggnz",
+    "storage_bucket": "neezn-ggnz.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:732914892685:android:1941f3d2e9a89704d387c4",
+        "mobilesdk_app_id": "1:441031740963:android:e2456e5f93342f46466b96",
         "android_client_info": {
-          "package_name": "com.neeznggnz.tadpolediary"
+          "package_name": "com.example.ggnz"
         }
       },
       "oauth_client": [
         {
-          "client_id": "732914892685-ud8e3vig97iab4hspmpt8lqp8hlgatk0.apps.googleusercontent.com",
+          "client_id": "441031740963-t3541bue2fu4qurutcgbdpt301b4rght.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.neeznggnz.tadpolediary",
-            "certificate_hash": "56b9ff58ecbe63cacfb076d578c2e9b0db44ee0c"
+            "package_name": "com.example.ggnz",
+            "certificate_hash": "d701f60530f331b7bf708e6f50daf17a335463a9"
           }
         },
         {
-          "client_id": "732914892685-phbcq7u26lfpbod9efbo5su6pg3rf494.apps.googleusercontent.com",
+          "client_id": "441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBR3AX732jkwhgmOFDs9WZ7UyN5aCQ5Z6I"
+          "current_key": "AIzaSyAt3NSf_pudOoM31-nOx5uN-EwkZ8pMxF4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "732914892685-phbcq7u26lfpbod9efbo5su6pg3rf494.apps.googleusercontent.com",
+              "client_id": "441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "732914892685-nv1s9kemt7hlvafmh5vagpgmsk4pu7ef.apps.googleusercontent.com",
+              "client_id": "441031740963-huhdd8hiqf1c8lidj8cbc1hvgvrlllgo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neeznggnz.tadpolediary"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441031740963:android:9fbb673c8e1b9114466b96",
+        "android_client_info": {
+          "package_name": "com.neeznggnz.tadpolediary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441031740963-7s0brcnlmh08k4f1m1g4nga2v9rnpi1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neeznggnz.tadpolediary",
+            "certificate_hash": "d701f60530f331b7bf708e6f50daf17a335463a9"
+          }
+        },
+        {
+          "client_id": "441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAt3NSf_pudOoM31-nOx5uN-EwkZ8pMxF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "441031740963-huhdd8hiqf1c8lidj8cbc1hvgvrlllgo.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.neeznggnz.tadpolediary"

@@ -7,9 +7,7 @@ import 'package:ggnz/presentation/pages/wallet/sign_wallet_page.dart';
 import 'package:ggnz/presentation/widgets/dialog/mission_item_dialog.dart';
 import 'package:ggnz/services/exchange_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:crypto/crypto.dart';
 import 'package:get/get.dart';
-import 'package:ggnz/services/main_timer.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ggnz/utils/audio_controller.dart';
 import 'package:ggnz/utils/enums.dart';
@@ -32,7 +30,6 @@ import 'package:ggnz/services/dispatch_handler.dart';
 import 'package:ggnz/services/minting_handler.dart';
 import 'package:ggnz/services/notification_handler.dart';
 import 'package:ggnz/presentation/widgets/dialog/play_continue_dialog.dart';
-import 'package:ggnz/presentation/widgets/dialog/mission_item_dialog.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:ggnz/utils/utility_function.dart';
 import 'package:uuid/uuid.dart';
@@ -129,10 +126,14 @@ class IncubatorPageController extends GetxController
       case AppLifecycleState.resumed:
         if (incubator != null) {
           final current_time = (await NTP.now()).millisecondsSinceEpoch;
-          if (lastIsLocked! || (current_time - lastUsedTime!) < 10000) {
+          if (lastIsLocked! || (current_time - lastUsedTime!) < 10000) { // 잠금 상태였거나 마지막 사용 시간이 10초 미만일 때의 로직
 
           } else if (!isContinueDialog) {
             isContinueDialog = true;
+
+            // PlayContinueDialog 호출 전에 로딩 중일 경우 닫는다..
+            isLoadingDialog ? closeLoadingDialog() : '';
+
             final continue_result = await Get.dialog(PlayContinueDialog(),
                 barrierDismissible: false,
                 transitionCurve: Curves.decelerate,

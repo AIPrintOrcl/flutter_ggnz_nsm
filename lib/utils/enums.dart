@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+// 아이템별 열거형 - ItemNames(key, name, imageUrl, tokenID)
 enum ItemNames {
   pillS('Clean Pill', '깨끗하게 정화제', "assets/market/pills_s.png", 6),
   pillM('Clear Pill', '맑게 정화제', "assets/market/pills_m.png", 7),
@@ -38,6 +39,7 @@ enum ItemNames {
   }
 }
 
+// 아이템 상자별 열거형 - ItemNames(key, name, imageUrl, tokenID)
 enum ItemBoxType {
   woodRandomBox('Wood Random Box', '나무상자', 'assets/wooden_box.png', 1),
   ironRandomBox('Iron Random Box', '철상자', 'assets/iron_box.png', 2);
@@ -53,6 +55,7 @@ enum ItemBoxType {
   }
 }
 
+// 알별 열거형 - ItemNames(key, name, imageUrl, tokenID)
 enum EggType {
   egg('egg', '개구니알', 'assets/market/item_egg0.gif', 1),
   eggSpecial('eggSpecial', '특별한 개구니알', 'assets/market/item_egg1.gif', 2),
@@ -69,12 +72,17 @@ enum EggType {
   }
 }
 
+// 아이템에게. => 아이템이 영향을 미치는 대상(환경, 건강)
 enum ItemTo { environment, health }
 
+// 아이템의 능력 유형(카운트, 퍼센트, 알, 아이템 상자, 민트)
 enum ItemAbilityType { count, percent, egg, itembox, mint }
 
+// 환경 상태(나쁨, 보통, 좋음)
 enum EnvironmentState { bad, normal, good }
 
+// 알의 상태(일반, 특별, 프리미엄)
 enum EggState { NORMAL, SPECIAL, PREMINUM }
 
+// 상자의 종류(나무, 철)
 enum BoxType { wooden, iron }

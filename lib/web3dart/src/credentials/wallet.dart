@@ -281,6 +281,12 @@ class Wallet {
     return file.exists();
   }
 
+  // 앱 내부에 생성된 지갑 파일을 삭제. 로그아웃 할 경우 삭제되도록 하기 위함.
+  static Future<void> deleteKeystore() async {
+    final file = await FilePath()._localFile;
+    file.delete(); // 파일 삭제
+  }
+
   static Future<String> getJsonFromFile() async {
     final file = await FilePath()._localFile;
     return file.readAsStringSync();

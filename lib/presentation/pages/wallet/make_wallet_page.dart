@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
@@ -90,9 +92,11 @@ class MakeWalletPage extends StatelessWidget {
                                   stream: FirebaseAuth.instance.authStateChanges(),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
+                                      // 플랫폼에 따른 clientId = Platform.isAndroid ? android : ios
+                                      var clientId = Platform.isAndroid ? '441031740963-tf4oq8iknnu2u38lfbamdsblfs0d0eic.apps.googleusercontent.com' : '441031740963-huhdd8hiqf1c8lidj8cbc1hvgvrlllgo.apps.googleusercontent.com';
                                       return SignInScreen(
                                         providers: [
-                                          GoogleProvider(clientId: '441031740963-97of9d709oheps0dmfl8ovuvdmimg1lo.apps.googleusercontent.com'),
+                                          GoogleProvider(clientId: clientId),
                                           AppleProvider()
                                         ],
                                       );

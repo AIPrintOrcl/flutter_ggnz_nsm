@@ -19,11 +19,11 @@ class ReactiveCommonController extends GetxController {
   final mode = "userId";
 
   // web3dart 관련
-  late final Web3Client client; /* Web3.0 클라이언트. Ethereum 블록체인과의 상호작용을 담당 */
-  late final chainID; /* 현재 모드에 따른 체인 ID를 저장 */
-  late double baitPrice; /* BAIT 토큰의 가격을 나타내는 변수 */
+  late final Web3Client client; // Web3.0 클라이언트. Ethereum 블록체인과의 상호작용을 담당
+  late final chainID; // 현재 모드에 따른 체인 ID를 저장
+  late double baitPrice; // BAIT 토큰의 가격을 나타내는 변수
 
-  final RxString deviceID = "".obs; /* 장치 ID를 관리 */
+  final RxString deviceID = "".obs; // 장치 ID를 관리
 
   // 서로 다른 스마트 계약에 대한 인스턴스
   /// DeployedContract : 이더리움 블록체인에 배포된 스마트 계약과 상호 작용하기 위한 헬퍼 클래스
@@ -34,12 +34,13 @@ class ReactiveCommonController extends GetxController {
   late DeployedContract miscContract;
   late DeployedContract otpContract;
 
-  int gogIndex = 1; /* 보통알 인덱스 */
-  int gopIndex = 2; /* 특별한알 인덱스 */
-  int ocnzIndex = 3; /* 프리미엄알 인덱스 */
+  int gogIndex = 1; // 보통알 인덱스
+  int gopIndex = 2; // 특별한알 인덱스
+  int ocnzIndex = 3; // 프리미엄알 인덱스
 
-  late final bool isWalletExist;  /* 생성된 지갑이 있는지 여부 */
-  late final bool isUserIdExist;  /* 로그인한 유저 아이디 있는지 여부 */
+  late final bool isWalletExist;  // 생성된 지갑이 있는지 여부
+  var isUserIdExist; // 로그인 상태인지 확인
+  // late final bool isUserIdExist;
 
   // get data from firestore
   final firestore.FirebaseFirestore db = firestore.FirebaseFirestore.instance;
@@ -60,32 +61,32 @@ class ReactiveCommonController extends GetxController {
   final ocnzInfo = {}.obs;
 
   // 시간 관련 데이터를 관리
-  final RxList woodBoxTime = [].obs; /* 사용자가 나무 상자(woodbox)를 열 수 있는 시간을 관리 */
-  final RxList continueTime = [].obs; /* 사용자가 연속적으로 활동한 시간을 관리 */
+  final RxList woodBoxTime = [].obs; // 사용자가 나무 상자(woodbox)를 열 수 있는 시간을 관리
+  final RxList continueTime = [].obs; // 사용자가 연속적으로 활동한 시간을 관리
 
   /// 지갑 주소
-  RxString walletAddress = "".obs; /* 사용자 지갑 주소 */
-  RxString uid = "".obs; /* 사용자 아이디 */
-  RxMap keystoreFile = {}.obs; /* keystore 파일을 관리 */
+  RxString walletAddress = "".obs; // 사용자 지갑 주소
+  RxString uid = "".obs; // 사용자 아이디
+  RxMap keystoreFile = {}.obs; // keystore 파일을 관리
 
   /// 환경게이지
-  RxDouble environmentLevel = 360.0.obs; /* 현재 환경게이지 - 초기 : 360 */
-  double environmentBad = 240.0; /* 환경게이지 나쁨 */
-  double environmentNormal = 480.0; /* 환경게이지 보통 */
-  double environmentGood = 600.0; /* 환경게이지 좋음 */
+  RxDouble environmentLevel = 360.0.obs; // 현재 환경게이지 - 초기 : 360
+  double environmentBad = 240.0; // 환경게이지 나쁨
+  double environmentNormal = 480.0; // 환경게이지 보통
+  double environmentGood = 600.0; // 환경게이지 좋음
 
   /// 건강도 (건강도는 전역으로 가지고 있다 새롭게 play 버튼을 누르면 사라지게 작업?)
   RxDouble healthLevel = 0.0.obs;
 
   // 아이템 사용, 보상 등을 관리
   final RxMap itemUsed = {}.obs;
-  final RxMap getReward = {}.obs; /* 보상 */
+  final RxMap getReward = {}.obs; // 보상
   final RxMap collectingReward = {}.obs;
   final collectingViewController = Get.find<CollectingViewController>();
   final missionViewController = Get.find<MissionViewController>();
 
-  late final mainTimer timer; /* 데이터베이스와 연동하여 타이머를 관리하는 인스턴스 */
-  late final SharedPreferences sharedPrefs; /* 앱의 간단한 데이터를 로컬 스토리지에 저장하기 위해 사용되는 객체 */
+  late final mainTimer timer; // 데이터베이스와 연동하여 타이머를 관리하는 인스턴스 */
+  late final SharedPreferences sharedPrefs; // 앱의 간단한 데이터를 로컬 스토리지에 저장하기 위해 사용되는 객체 */
 
   // 초기화 함수로, Web3.0 클라이언트를 설정하고 체인 ID를 가져오는 작업 수행
   @override
@@ -116,9 +117,9 @@ class ReactiveCommonController extends GetxController {
     try {
       if (walletAddress.value != "") {
         // if (mode == "abis") {
-        await getGogGop(); /* GOG(프리미엄 알), GOP(특별한 알) */
-        await checkErrorLength(db); /* 사용자의 오류 로그 길이를 확인하고, 길이가 제한을 초과하는 경우 일부 로그를 삭제 */
-        deviceID.value = await getDeviceInfo(); /* 디바이스 정보를 가져와 Android의 경우 디바이스 ID를, iOS의 경우 identifierForVendor를 반환합니다. */
+        await getGogGop(); // GOG(프리미엄 알), GOP(특별한 알)
+        await checkErrorLength(db); // 사용자의 오류 로그 길이를 확인하고, 길이가 제한을 초과하는 경우 일부 로그를 삭제
+        deviceID.value = await getDeviceInfo(); // 디바이스 정보를 가져와 Android의 경우 디바이스 ID를, iOS의 경우 identifierForVendor를 반환합니다.
         // }
 
         await getWalletCoinBalance(["BAIT"]);
@@ -187,7 +188,8 @@ class ReactiveCommonController extends GetxController {
 
     print("test gog, gop, ocnz: ${getx.gog.value} ${getx.gop.value}");
 
-    /*if (getx.gog.value > 0) {
+    /*
+    if (getx.gog.value > 0) {
       getGogImageURL();
     }
 
@@ -197,7 +199,8 @@ class ReactiveCommonController extends GetxController {
 
     if (getx.ocnz.value > 0) {
       getOcnzImageURL();
-    }*/
+    }
+    */
 
     return true;
   }
@@ -210,12 +213,13 @@ class ReactiveCommonController extends GetxController {
       getx.bait.value = docData?['bait']?.toDouble() ?? 0.0;
     }
 
-    /*if (l.contains("BAIT")) {
+    /*
+    if (l.contains("BAIT")) {
       getx.bait.value = (await getx.client.call(
               sender: userAddress,
               contract: getx.baitContract,
-              function: getx.baitContract.function("balanceOf"), *//* baitContract의 balanceOf 함수를 호출 *//*
-              params: [userAddress, BigInt.one]))[0] *//* balanceOf 함수는 주어진 사용자 주소와 BigInt.one을 인자로 받아 잔액을 반환 *//*
+              function: getx.baitContract.function("balanceOf"), // baitContract의 balanceOf 함수를 호출
+              params: [userAddress, BigInt.one]))[0] // balanceOf 함수는 주어진 사용자 주소와 BigInt.one을 인자로 받아 잔액을 반환
           .toDouble();
     }
 
@@ -223,11 +227,12 @@ class ReactiveCommonController extends GetxController {
       getx.ggnz.value = (await getx.client.call(
                   sender: userAddress,
                   contract: getx.ggnzContract,
-                  function: getx.ggnzContract.function("balanceOf"), *//* ggnzContract의 balanceOf 함수를 호출 *//*
-                  params: [userAddress]))[0] *//* balanceOf 함수는 주어진 사용자 주소를 인자로 받아 잔액을 반환 *//*
+                  function: getx.ggnzContract.function("balanceOf"), // ggnzContract의 balanceOf 함수를 호출
+                  params: [userAddress]))[0] // balanceOf 함수는 주어진 사용자 주소를 인자로 받아 잔액을 반환
               .toDouble() /
-          pow(10, 18); *//* 조회된 잔액을 toDouble()로 변환하고, 10^18로 나누어(=18자리 소수점) getx.ggnz.value에 저장 *//*
-    }*/
+          pow(10, 18); // 조회된 잔액을 toDouble()로 변환하고, 10^18로 나누어(=18자리 소수점) getx.ggnz.value에 저장
+    }
+    */
 
     return true;
   }
@@ -281,7 +286,7 @@ class ReactiveCommonController extends GetxController {
         final data = docSnapshot.data();
         final require = collectingViewController.getRequire(data["mission"]);
 
-        collectingViewController.collectings.value.add({ /* 새로운 수집 항목을 추가합니다. */
+        collectingViewController.collectings.value.add({ // 새로운 수집 항목을 추가합니다.
           "title": data["name"],
           "content": data["content"],
           "require": require,
@@ -292,7 +297,7 @@ class ReactiveCommonController extends GetxController {
         });
       }
 
-      collectingViewController.collectings.value.add( /* 특정 조건 만족하지 못해 추간된 빈 항목 */
+      collectingViewController.collectings.value.add( // 특정 조건 만족하지 못해 추간된 빈 항목
           {'title': '', 'content': '', "require": 1, "current": 1, "rewards": []}
       );
     });

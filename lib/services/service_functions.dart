@@ -26,7 +26,8 @@ int getChainID(String mode) {
   return mode == "abis"? 8217 : 1001;
 }
 
-String getUserCollectionName(String mode) { /* 모드에 따른 사용자명 반환 */
+// 모드에 따른 사용자명 반환
+String getUserCollectionName(String mode) {
   //   return mode == "userId"? "users_v2": "users_test";
   // var user = LoginController.instance.getUser!.email;
   // return mode == "userId" ? "users_v2": user!;

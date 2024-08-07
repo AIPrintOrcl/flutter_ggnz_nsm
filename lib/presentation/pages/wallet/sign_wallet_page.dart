@@ -95,22 +95,22 @@ class SignWalletPage extends StatelessWidget {
 
                           final incubatorPageController = Get.find<IncubatorPageController>();
 
-                          if (arg["reason"] == 'MINT') { /* '입양하기' 버튼 -> 밍틴을 GGNZ와 민팅권 소비 중 선택 type : 1 = 1000 GGNZ, type : 2 = 민팅권  */
+                          if (arg["reason"] == 'MINT') { // '입양하기' 버튼 -> 밍틴을 GGNZ와 민팅권 소비 중 선택 type : 1 = 1000 GGNZ, type : 2 = 민팅권
                             Get.back(result: true);
-                            incubatorPageController.setIsDispatchAnimationDone(dispatchAnimationDone: true); /* 파견보내기 애니메이션이 모두 완료 */
-                            incubatorPageController.minting(arg["type"]); /*  */
+                            incubatorPageController.setIsDispatchAnimationDone(dispatchAnimationDone: true); // 파견보내기 애니메이션이 모두 완료
+                            incubatorPageController.minting(arg["type"]);
                             return;
                           }
-                          if (arg["reason"] == 'dispatch_start') { /* '방생하기' 버튼을 클릭 했을 경우 [dispatch_dialog.dart] */
+                          if (arg["reason"] == 'dispatch_start') { // '방생하기' 버튼을 클릭 했을 경우 [dispatch_dialog.dart]
                             Get.back(result: true);
                             incubatorPageController.dispatch(arg["amount"]);
                           }
-                          if (arg["reason"] == 'egg') {
+                          if (arg["reason"] == 'egg') { // 상점에서 알 구입할 경우
                             Get.back();
                             incubatorPageController.buyEgg(arg["number"]);
                             return;
                           }
-                          if (arg["reason"] == '100' || arg["reason"] == '300') {
+                          if (arg["reason"] == '100' || arg["reason"] == '300') { // 상점에서 상자를 구입할 경우
                             Get.back();
                             incubatorPageController.buyItem(int.parse(arg["reason"]), true);
                             return;
